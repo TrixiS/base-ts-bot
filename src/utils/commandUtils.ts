@@ -3,7 +3,7 @@ import glob from "glob";
 import path from "path";
 import { ApplicationCommandManager } from "discord.js";
 
-const commandsPath = path.join(__dirname, "../commands");
+export const commandsPath = path.join(__dirname, "../commands");
 
 export const loadCommands = (): ISlashCommand[] => {
   const commands: ISlashCommand[] = [];
