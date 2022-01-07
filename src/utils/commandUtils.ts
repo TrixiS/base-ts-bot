@@ -23,7 +23,16 @@ export const registerCommand = async (
   commandManager: ApplicationCommandManager,
   command: ISlashCommand
 ) => {
-  if (commandManager.cache.get(command.builder.name)) {
+  if (commandManager.cache.size === 0) {
+    await commandManager.fetch();
+  }
+
+  const allCommands = Array.from(commandManager.cache.values());
+  const sameNameCommand = allCommands.find(
+    (c) => c.name === command.builder.name
+  );
+
+  if (sameNameCommand) {
     return;
   }
 

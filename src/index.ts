@@ -13,9 +13,9 @@ const commands = loadCommands();
 client.once("ready", () => {
   const commandsManager = client.application?.commands;
 
-  commands.forEach((command) =>
-    registerCommand(commandsManager as any, command)
-  );
+  if (commandsManager) {
+    commands.forEach((command) => registerCommand(commandsManager, command));
+  }
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
@@ -24,11 +24,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
       (command) => command.builder.name === interaction.commandName
     );
 
-    if (!command) {
-      return;
+    if (command) {
+      await command.run(interaction);
     }
-
-    await command.run(interaction);
   }
 });
 
