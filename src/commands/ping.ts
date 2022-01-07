@@ -1,16 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
-import ISlashCommand from "../interfaces/ISlashCommand";
+import { ISlashCommand, RunOptions } from "../utils/commandUtils";
 
 const builder = new SlashCommandBuilder();
 builder.setName("ping");
-builder.setDescription("Pongs you");
+builder.setDescription("hello");
 
-const run = async (interaction: CommandInteraction) => {
-  await interaction.reply({
-    content: "Pong",
-    ephemeral: true,
-  });
+const run = async ({ interaction }: RunOptions) => {
+  await interaction.reply({ content: "Pong", ephemeral: true });
 };
 
 export default { builder, run } as ISlashCommand;

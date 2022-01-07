@@ -2,12 +2,12 @@ import fs from "fs";
 import path from "path";
 import { exec } from "child_process";
 import { Command } from "commander";
-import { commandsPath } from "./utils/commandUtils";
+import { commandsPath } from "../utils/commandUtils";
 
 type FilePath = string;
 
 type CreateCommandOptions = {
-  command: string;
+  name: string;
   description: string;
 };
 
@@ -18,7 +18,7 @@ type CLIOptions = CreateCommandOptions & {
 function parseCliOptions(): CLIOptions {
   const cli = new Command();
 
-  cli.requiredOption("-c, --command <commandName>", "Name of a new command");
+  cli.requiredOption("-n, --name <commandName>", "Name of a new command");
   cli.requiredOption(
     "-d, --description <commandDescription>",
     "Description of a command"
@@ -31,25 +31,23 @@ function parseCliOptions(): CLIOptions {
 
 function createCommandCode(options: CreateCommandOptions): string {
   const commandCode = `import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
-import ISlashCommand from "../interfaces/ISlashCommand";
+import { ISlashCommand, RunOptions } from "../utils/commandUtils";
 
 const builder = new SlashCommandBuilder();
-builder.setName("${options.command}");
+builder.setName("${options.name}");
 builder.setDescription("${options.description}");
 
-const run = async (interaction: CommandInteraction) => {
+const run = async ({ interaction }: RunOptions) => {
   // TODO: code
 };
 
-export default { builder, run } as ISlashCommand;
-`;
+export default { builder, run } as ISlashCommand;`;
 
   return commandCode;
 }
 
 function createCommand(options: CreateCommandOptions): FilePath {
-  const commandFilePath = path.join(commandsPath, `${options.command}.ts`);
+  const commandFilePath = path.join(commandsPath, `${options.name}.ts`);
   const commandCode = createCommandCode(options);
   fs.writeFileSync(commandFilePath, commandCode, { encoding: "utf-8" });
   return commandFilePath;

@@ -1,10 +1,10 @@
-import { Client, Intents, Interaction } from "discord.js";
+import { Intents, Interaction } from "discord.js";
 import { loadCommands, registerCommand } from "./utils/commandUtils";
-import * as dotenv from "dotenv";
+import phrases from "./utils/phrases";
+import { loadConfig } from "./utils/config";
+import BotClient from "./utils/client";
 
-dotenv.config();
-
-const client = new Client({
+const client = new BotClient(loadConfig(), {
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
@@ -16,6 +16,8 @@ client.once("ready", () => {
   if (commandsManager) {
     commands.forEach((command) => registerCommand(commandsManager, command));
   }
+
+  console.log(phrases.botStarted(client));
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
@@ -25,9 +27,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
     );
 
     if (command) {
-      await command.run(interaction);
+      await command.run({ client, interaction });
     }
   }
 });
 
-client.login(process.env.BOT_TOKEN);
+client.login(client.config.botToken);

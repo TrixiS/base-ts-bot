@@ -1,5 +1,6 @@
 # Custom
 bin/*
+config_dev.json
 
 # Logs
 logs

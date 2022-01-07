@@ -1,7 +1,18 @@
-import ISlashCommand from "../interfaces/ISlashCommand";
 import glob from "glob";
 import path from "path";
-import { ApplicationCommandManager } from "discord.js";
+import BotClient from "../utils/client";
+import { ApplicationCommandManager, CommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+
+export type RunOptions = {
+  client: BotClient;
+  interaction: CommandInteraction;
+};
+
+export interface ISlashCommand {
+  builder: SlashCommandBuilder;
+  run: (options: RunOptions) => Promise<void>;
+}
 
 export const commandsPath = path.join(__dirname, "../commands");
 
