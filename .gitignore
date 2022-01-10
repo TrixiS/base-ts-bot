@@ -1,4 +1,5 @@
 # Custom
+yarn.lock
 bin/*
 config_dev.json
 *.sqlite3

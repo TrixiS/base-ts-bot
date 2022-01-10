@@ -1,5 +1,7 @@
-import { Client } from "discord.js";
+import BotClient from "../client/client";
 
 export default {
-  botStarted: (bot: Client) => `Бот ${bot.user?.tag} запущен`,
+  default: {
+    botStarted: (client: BotClient) => `Бот ${client.user?.tag} запущен`,
+  },
 };
