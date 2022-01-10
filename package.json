@@ -12,7 +12,6 @@
     "cmd": "npx ts-node src/cli/createCommand.ts"
   },
   "dependencies": {
-    "@prisma/client": "^3.7.0",
     "discord.js": "^13.5.0",
     "prisma": "^3.7.0",
     "ts-node": "^10.4.0",

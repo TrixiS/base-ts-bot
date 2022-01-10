@@ -1,2 +1,2 @@
-npm i . && npx prisma db push && npm run start
+npm i . && npm run start
 pause
