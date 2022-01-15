@@ -7,12 +7,12 @@ const commandCode = (
   name: string,
   description: string
 ) => `class ${name}Command extends BaseSlashCommand {
-  constructor() {
+  constructor(extension: BaseExtension) {
     const builder = new SlashCommandBuilder()
       .setName("${name.toLowerCase()}")
       .setDescription("${description}");
     
-    super(builder);
+    super(extension, builder);
   }
   
   async run({ interaction }: CommandRunOptions) {

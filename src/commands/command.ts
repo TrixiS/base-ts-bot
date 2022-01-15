@@ -4,11 +4,13 @@ import {
 } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import BotClient from "../client/client";
+import BaseExtension from "./extension";
 
 export default abstract class BaseSlashCommand {
   private _subcommands: SubCommand[];
 
   constructor(
+    public readonly extension: BaseExtension,
     public readonly builder:
       | SlashCommandBuilder
       | SlashCommandSubcommandsOnlyBuilder
