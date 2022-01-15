@@ -1,13 +1,13 @@
 import BaseExtension from "../commands/extension";
+import BaseSlashCommand from "../commands/command";
 import { Client, ClientOptions } from "discord.js";
-import { ISlashCommand } from "../commands/command";
 import { ConfigType } from "./config";
 
 export default class BotClient extends Client {
   private _config: ConfigType;
   private _commandManagerCacheFetched: boolean = false;
   private _extensions: BaseExtension[] = [];
-  private _commands: Map<string, ISlashCommand> = new Map();
+  private _commands: Map<string, BaseSlashCommand> = new Map();
 
   constructor(config: ConfigType, options: ClientOptions) {
     super(options);
@@ -22,11 +22,13 @@ export default class BotClient extends Client {
     return this._extensions;
   }
 
-  public get commands(): ReadonlyMap<string, ISlashCommand> {
+  public get commands(): ReadonlyMap<string, BaseSlashCommand> {
     return this._commands;
   }
 
-  private async _isCommandRegistered(command: ISlashCommand): Promise<boolean> {
+  private async _isCommandRegistered(
+    command: BaseSlashCommand
+  ): Promise<boolean> {
     const commandManager = this.application?.commands;
 
     if (!commandManager) {
@@ -50,7 +52,7 @@ export default class BotClient extends Client {
     return sameNameCommand !== undefined;
   }
 
-  public async registerCommand(command: ISlashCommand) {
+  public async registerCommand(command: BaseSlashCommand) {
     if (await this._isCommandRegistered(command)) {
       return this._commands.set(command.builder.name, command);
     }

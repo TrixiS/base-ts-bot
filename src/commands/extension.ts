@@ -1,14 +1,17 @@
 import BotClient from "../client/client";
-import { ISlashCommand } from "./command";
+import BaseSlashCommand from "./command";
 
 export default abstract class BaseExtension {
-  private _commands: ISlashCommand[];
+  private _commands: BaseSlashCommand[];
 
-  constructor(public readonly client: BotClient, ...commands: ISlashCommand[]) {
+  constructor(
+    public readonly client: BotClient,
+    ...commands: BaseSlashCommand[]
+  ) {
     this._commands = commands;
   }
 
-  public get commands(): ReadonlyArray<ISlashCommand> {
+  public get commands(): ReadonlyArray<BaseSlashCommand> {
     return this._commands;
   }
 

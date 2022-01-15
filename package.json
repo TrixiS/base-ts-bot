@@ -2,7 +2,7 @@
   "name": "base-ts-bot",
   "version": "1.0.0",
   "description": "Base template for all of my kwork discord bots",
-  "main": "bin/index.ts",
+  "main": "bin/index.js",
   "repository": "https://github.com/TrixiS/base-ts-bot.git",
   "author": "TrixiS",
   "license": "MIT",
