@@ -16,7 +16,28 @@ export default class CommandHandlerExtension extends BaseExtension {
         return;
       }
 
-      await command.run({ client: this.client, interaction });
+      let subcommandsGroup: string | undefined;
+      let subcommandName: string | undefined;
+
+      try {
+        subcommandName = interaction.options.getSubcommand();
+      } catch {
+        return await command.run({ client, interaction });
+      }
+
+      try {
+        subcommandsGroup = interaction.options.getSubcommandGroup();
+      } catch {
+        subcommandsGroup = undefined;
+      }
+
+      const subcommand = command.subcommands.find(
+        (subcommand) =>
+          subcommand.group === subcommandsGroup &&
+          subcommand.name === subcommandName
+      );
+
+      await subcommand?.callback.call(command, { client, interaction });
     });
   }
 }
