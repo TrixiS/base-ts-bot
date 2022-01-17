@@ -6,11 +6,13 @@ import { CommandInteraction } from "discord.js";
 import BotClient from "../client/client";
 import BaseExtension from "./extension";
 
-export default abstract class BaseSlashCommand {
+export default abstract class BaseSlashCommand<
+  TExtension extends BaseExtension = BaseExtension
+> {
   private _subcommands: SubCommand[];
 
   constructor(
-    public readonly extension: BaseExtension,
+    public readonly extension: TExtension,
     public readonly builder:
       | SlashCommandBuilder
       | SlashCommandSubcommandsOnlyBuilder
@@ -39,6 +41,10 @@ export default abstract class BaseSlashCommand {
 
   public get subcommands(): ReadonlyArray<SubCommand> {
     return this._subcommands;
+  }
+
+  public async checkInteraction(options: CommandRunOptions): Promise<boolean> {
+    return true;
   }
 
   public abstract run(options: CommandRunOptions): any;

@@ -1,5 +1,6 @@
 import BaseExtension from "../commands/extension";
 import BotClient from "../client/client";
+import { CommandRunOptions } from "../commands/command";
 
 export default class CommandHandlerExtension extends BaseExtension {
   constructor(client: BotClient) {
@@ -16,13 +17,19 @@ export default class CommandHandlerExtension extends BaseExtension {
         return;
       }
 
+      const runOptions: CommandRunOptions = { client, interaction };
+
+      if (!(await command.checkInteraction(runOptions))) {
+        return;
+      }
+
       let subcommandsGroup: string | undefined;
       let subcommandName: string | undefined;
 
       try {
         subcommandName = interaction.options.getSubcommand();
       } catch {
-        return await command.run({ client, interaction });
+        return await command.run(runOptions);
       }
 
       try {
@@ -37,7 +44,7 @@ export default class CommandHandlerExtension extends BaseExtension {
           subcommand.name === subcommandName
       );
 
-      await subcommand?.callback.call(command, { client, interaction });
+      await subcommand?.callback.call(command, runOptions);
     });
   }
 }
