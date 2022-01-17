@@ -47,7 +47,19 @@ export default abstract class BaseSlashCommand<
     return true;
   }
 
+  public addSubcommand(subcommand: SubCommand) {
+    this._subcommands.push(subcommand);
+  }
+
   public abstract run(options: CommandRunOptions): any;
+}
+
+export abstract class GuildOnlyCommand<
+  TExtension extends BaseExtension = BaseExtension
+> extends BaseSlashCommand<TExtension> {
+  public async checkInteraction(options: CommandRunOptions): Promise<boolean> {
+    return Boolean(options.interaction.guild && options.interaction.member);
+  }
 }
 
 export function subcommand(options: SubCommandOptions = {}) {
