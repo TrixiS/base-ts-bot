@@ -5,6 +5,7 @@ import {
 import { CommandInteraction } from "discord.js";
 import BotClient from "../client/client";
 import BaseExtension from "./extension";
+import { SubCommand } from "./subcommand";
 
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
@@ -62,42 +63,9 @@ export abstract class GuildOnlyCommand<
   }
 }
 
-export function subcommand(options: SubCommandOptions = {}) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    if (!descriptor.value) {
-      throw new Error(`Descriptor value is ${descriptor.value}`);
-    }
-
-    if (!delete target[propertyKey]) {
-      throw new Error(
-        "Cannot delete a method to register a subcommand handler"
-      );
-    }
-
-    descriptor.value = new SubCommand(
-      descriptor.value,
-      options.name ?? propertyKey,
-      options.group
-    );
-  };
-}
-
-export class SubCommand {
-  constructor(
-    public readonly callback: CommandCallback,
-    public readonly name: string,
-    public readonly group?: string
-  ) {}
-}
-
 export type CommandRunOptions = {
   client: BotClient;
   interaction: CommandInteraction;
 };
 
-type CommandCallback = (options: CommandRunOptions) => Promise<any>;
-
-type SubCommandOptions = {
-  name?: string;
-  group?: string;
-};
+export type CommandCallback = (options: CommandRunOptions) => Promise<any>;
