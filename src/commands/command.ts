@@ -1,16 +1,18 @@
+import BotClient from "../client/client";
+import BaseExtension from "./extension";
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import BotClient from "../client/client";
-import BaseExtension from "./extension";
+import { CommandCheck } from "./checkFactory";
 import { SubCommand } from "./subcommand";
 
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
-  private _subcommands: SubCommand[];
+  protected _subcommands: SubCommand[];
+  protected _checks: CommandCheck[] = [];
 
   constructor(
     public readonly extension: TExtension,
@@ -44,23 +46,29 @@ export default abstract class BaseSlashCommand<
     return this._subcommands;
   }
 
-  public async checkInteraction(options: CommandRunOptions): Promise<boolean> {
-    return true;
+  public get checks(): ReadonlyArray<CommandCheck> {
+    return this._checks;
   }
 
   public addSubcommand(subcommand: SubCommand) {
     this._subcommands.push(subcommand);
   }
 
-  public abstract run(options: CommandRunOptions): any;
-}
-
-export abstract class GuildOnlyCommand<
-  TExtension extends BaseExtension = BaseExtension
-> extends BaseSlashCommand<TExtension> {
-  public async checkInteraction(options: CommandRunOptions): Promise<boolean> {
-    return Boolean(options.interaction.guild && options.interaction.member);
+  public addCheck(check: CommandCheck) {
+    this._checks.push(check);
   }
+
+  public async runChecks(options: CommandRunOptions): Promise<boolean> {
+    for (const check of this._checks) {
+      if (!(await check(options))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public abstract run(options: CommandRunOptions): any;
 }
 
 export type CommandRunOptions = {

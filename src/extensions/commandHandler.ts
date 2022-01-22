@@ -19,7 +19,7 @@ export default class CommandHandlerExtension extends BaseExtension {
 
       const runOptions: CommandRunOptions = { client, interaction };
 
-      if (!(await command.checkInteraction(runOptions))) {
+      if (!(await command.runChecks(runOptions))) {
         return;
       }
 
