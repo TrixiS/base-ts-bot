@@ -25,11 +25,10 @@ function parseCliOptions(): CLIOptions {
 
   cli.requiredOption(
     "-e, --extension <extension>",
-    "Extension to create command in (filename.ts)"
+    "Extension to create command in (name of the extension file)"
   );
 
-  cli.requiredOption("-c, --command <command>", "Command name (in PascalCase)");
-  cli.requiredOption("-d, --description <description>", "Command description");
+  cli.requiredOption("-n, --name <name>", "Command name (in PascalCase)");
   cli.option("-j --jump", "Jump to the extension file (VSCode only)");
   cli.parse(process.argv);
 
@@ -37,7 +36,7 @@ function parseCliOptions(): CLIOptions {
 }
 
 function appendCommandCodeToFile(options: CLIOptions, filepath: string) {
-  const code = commandCode(options.command, options.description);
+  const code = commandCode(options.command, "description");
   fs.appendFileSync(filepath, `\n\n${code}`, { encoding: "utf-8" });
 }
 
@@ -67,7 +66,6 @@ function main() {
 type CLIOptions = {
   extension: string;
   command: string;
-  description: string;
   jump: boolean;
 };
 
