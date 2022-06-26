@@ -1,9 +1,11 @@
 import fs from "fs/promises";
 import path from "path";
 
+// TODO: use config npm package
+
 export type ConfigType = {
   readonly botToken: string;
-} ;
+};
 
 export default class Config {
   private static _configFileNames: string[] = [

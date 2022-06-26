@@ -8,6 +8,8 @@ import { CommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
 import { SubCommand } from "./subcommand";
 
+// TODO: decide how to implement options parsing (push them into CommandRunOptions.options)
+
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
@@ -54,7 +56,7 @@ export default abstract class BaseSlashCommand<
     return true;
   }
 
-  public abstract run(options: CommandRunOptions): any;
+  public async run(options: CommandRunOptions): Promise<any> {}
 }
 
 function PrototypeField(defaultValue?: any) {

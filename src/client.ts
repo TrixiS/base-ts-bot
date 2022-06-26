@@ -33,6 +33,6 @@ export default class BotClient extends Client {
 
   public async registerExtension(extension: BaseExtension) {
     this._extensions.push(extension);
-    await extension.initialize();
+    await extension.register();
   }
 }
