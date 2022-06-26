@@ -1,5 +1,5 @@
 import BaseExtension from "../commands/extension";
-import BotClient from "../client/client";
+import BotClient from "../client";
 import { CommandRunOptions } from "../commands/command";
 
 export default class CommandHandlerExtension extends BaseExtension {

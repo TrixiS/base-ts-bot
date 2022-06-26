@@ -1,4 +1,4 @@
-import BotClient from "../client/client";
+import BotClient from "../client";
 import BaseSlashCommand from "./command";
 
 export default abstract class BaseExtension {

@@ -1,4 +1,4 @@
-import BotClient from "../client/client";
+import BotClient from "./client";
 
 export default {
   default: {

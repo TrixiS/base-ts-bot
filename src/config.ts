@@ -2,8 +2,8 @@ import fs from "fs/promises";
 import path from "path";
 
 export type ConfigType = {
-  botToken: string;
-};
+  readonly botToken: string;
+} ;
 
 export default class Config {
   private static _configFileNames: string[] = [

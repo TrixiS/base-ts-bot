@@ -1,8 +1,8 @@
-import BotClient from "./client/client";
-import Config from "./client/config";
+import BotClient from "./client";
+import Config from "./config";
 import CommandHandlerExtension from "./extensions/commandHandler";
 import constants from "./utils/constants";
-import phrases from "./utils/phrases";
+import phrases from "./phrases";
 import { Intents } from "discord.js";
 
 async function main() {
