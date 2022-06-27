@@ -7,17 +7,19 @@ import {
 import { CommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
 import { SubCommand } from "./subcommand";
+import DefaultMap from "./defaultMap";
 
 // TODO: decide how to implement options parsing (push them into CommandRunOptions.options)
 
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
-  @PrototypeField([])
-  private _subcommands?: SubCommand[];
+  protected static _subcommands: DefaultMap<string, SubCommand[]> =
+    new DefaultMap(() => []);
 
-  @PrototypeField([])
-  private _checks?: CommandCheck[];
+  protected static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(
+    () => []
+  );
 
   constructor(
     public readonly extension: TExtension,
@@ -26,28 +28,34 @@ export default abstract class BaseSlashCommand<
       | SlashCommandSubcommandsOnlyBuilder
   ) {}
 
-  public get subcommands(): ReadonlyArray<SubCommand> {
-    return this._subcommands ?? [];
+  protected _getChecks(): CommandCheck[] {
+    return BaseSlashCommand._checks.get(this.constructor.name);
+  }
+
+  protected _getSubcommands(): SubCommand[] {
+    return BaseSlashCommand._subcommands.get(this.constructor.name);
   }
 
   public get checks(): ReadonlyArray<CommandCheck> {
-    return this._checks ?? [];
+    return this._getChecks();
+  }
+
+  public get subcommands(): ReadonlyArray<SubCommand> {
+    return this._getSubcommands();
   }
 
   public addSubcommand(subcommand: SubCommand) {
-    this._subcommands?.push(subcommand);
+    this._getSubcommands().push(subcommand);
   }
 
   public addCheck(check: CommandCheck) {
-    this._checks?.push(check);
+    this._getChecks().push(check);
   }
 
   public async runChecks(options: CommandRunOptions): Promise<boolean> {
-    if (!this._checks) {
-      return true;
-    }
+    const checks = this._getChecks();
 
-    for (const check of this._checks) {
+    for (const check of checks) {
       if (!(await check(options))) {
         return false;
       }
@@ -57,16 +65,6 @@ export default abstract class BaseSlashCommand<
   }
 
   public async run(options: CommandRunOptions): Promise<any> {}
-}
-
-function PrototypeField(defaultValue?: any) {
-  return (target: any, propertyKey: string) => {
-    const getter = () => {
-      return defaultValue;
-    };
-
-    Reflect.defineProperty(target, propertyKey, { get: getter });
-  };
 }
 
 export type CommandRunOptions = {

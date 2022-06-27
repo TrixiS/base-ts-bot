@@ -1,4 +1,4 @@
-import { CommandCallback } from "./command";
+import BaseSlashCommand, { CommandCallback } from "./command";
 
 export default function subcommand(options: SubCommandOptions = {}) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -8,7 +8,11 @@ export default function subcommand(options: SubCommandOptions = {}) {
       group: options.group,
     };
 
-    target._subcommands.push(subCommand);
+    const subcommands = (BaseSlashCommand as any)._subcommands.get(
+      target.constructor.name
+    );
+
+    subcommands.push(subCommand);
   };
 }
 
