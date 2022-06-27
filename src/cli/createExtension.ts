@@ -5,7 +5,7 @@ import { toCamelCase, extensionsPath, jumpToFile } from "./utils";
 
 const extensionCode = (
   extensionName: string
-) => `import BotClient from "../client/client";
+) => `import BotClient from "../client";
 import BaseSlashCommand, { CommandRunOptions } from "../commands/command";
 import BaseExtension from "../commands/extension";
 import { SlashCommandBuilder } from "@discordjs/builders";

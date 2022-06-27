@@ -36,7 +36,7 @@ function parseCliOptions(): CLIOptions {
 }
 
 function appendCommandCodeToFile(options: CLIOptions, filepath: string) {
-  const code = commandCode(options.command, "description");
+  const code = commandCode(options.name, "description");
   fs.appendFileSync(filepath, `\n\n${code}`, { encoding: "utf-8" });
 }
 
@@ -65,7 +65,7 @@ function main() {
 
 type CLIOptions = {
   extension: string;
-  command: string;
+  name: string;
   jump: boolean;
 };
 
