@@ -1,3 +1,4 @@
+import Discord from "discord.js";
 import BotClient from "../client";
 import BaseExtension from "./extension";
 import {
@@ -11,13 +12,26 @@ import DefaultMap from "./defaultMap";
 
 // TODO: decide how to implement options parsing (push them into CommandRunOptions.options)
 
+// TODO: interface for builder
+
+// TODO: improve cmd/ext scripts, allow sub directories (pass all data in camelCase)
+
+// TODO: add member and guild into command run options
+
+// TODO: auto import prisma, phrases
+
+// TODO: specify extension type in cmd script (optional)
+
+// TODO: fix start scripts
+
 export default abstract class BaseSlashCommand<
-  TExtension extends BaseExtension = BaseExtension
+  TExtension extends BaseExtension = BaseExtension,
+  TRunOptionsData = DefaultRunOptionsData
 > {
-  protected static _subcommands: DefaultMap<string, SubCommand[]> =
+  private static _subcommands: DefaultMap<string, SubCommand[]> =
     new DefaultMap(() => []);
 
-  protected static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(
+  private static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(
     () => []
   );
 
@@ -52,7 +66,9 @@ export default abstract class BaseSlashCommand<
     this._getChecks().push(check);
   }
 
-  public async runChecks(options: CommandRunOptions): Promise<boolean> {
+  public async runChecks(
+    options: CommandRunOptions<TRunOptionsData>
+  ): Promise<boolean> {
     const checks = this._getChecks();
 
     for (const check of checks) {
@@ -64,12 +80,41 @@ export default abstract class BaseSlashCommand<
     return true;
   }
 
-  public async run(options: CommandRunOptions): Promise<any> {}
+  public async run(options: CommandRunOptions<TRunOptionsData>): Promise<any> {}
+
+  public async getRunOptions(
+    interaction: Discord.CommandInteraction
+  ): Promise<CommandRunOptions<TRunOptionsData>> {
+    const guild = interaction.guild ?? undefined;
+    const member = guild?.members.cache.get(interaction.user.id);
+    const data = await this.getData(interaction);
+
+    return {
+      interaction,
+      guild,
+      member,
+      data,
+      client: this.extension.client,
+    };
+  }
+
+  public async getData(
+    interaction: Discord.CommandInteraction
+  ): Promise<TRunOptionsData> {
+    return {} as any;
+  }
 }
 
-export type CommandRunOptions = {
+export type DefaultRunOptionsData = Record<string, any>;
+
+export type CommandRunOptions<TData = DefaultRunOptionsData> = {
   client: BotClient;
   interaction: CommandInteraction;
+  member?: Discord.GuildMember;
+  guild?: Discord.Guild;
+  data: TData;
 };
 
-export type CommandCallback = (options: CommandRunOptions) => Promise<any>;
+export type CommandCallback<TData = DefaultRunOptionsData> = (
+  options: CommandRunOptions<TData>
+) => Promise<any>;

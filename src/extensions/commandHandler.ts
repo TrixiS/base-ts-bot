@@ -1,6 +1,5 @@
 import BaseExtension from "../commands/extension";
 import BotClient from "../client";
-import { CommandRunOptions } from "../commands/command";
 
 export default class CommandHandlerExtension extends BaseExtension {
   constructor(client: BotClient) {
@@ -12,14 +11,9 @@ export default class CommandHandlerExtension extends BaseExtension {
       }
 
       const command = this.client.commands.get(interaction.command.name);
+      const runOptions = await command?.getRunOptions(interaction);
 
-      if (!command) {
-        return;
-      }
-
-      const runOptions: CommandRunOptions = { client, interaction };
-
-      if (!(await command.runChecks(runOptions))) {
+      if (!command || !runOptions || !(await command.runChecks(runOptions))) {
         return;
       }
 
