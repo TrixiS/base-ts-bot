@@ -1,11 +1,7 @@
 import Discord from "discord.js";
 import BotClient from "../client";
 import BaseExtension from "./extension";
-import {
-  SlashCommandBuilder,
-  SlashCommandSubcommandsOnlyBuilder,
-} from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { BaseCommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
 import { SubCommand } from "./subcommand";
 import DefaultMap from "./defaultMap";
@@ -22,6 +18,14 @@ import DefaultMap from "./defaultMap";
 
 // TODO: fix start scripts
 
+// TODO: command type in scripts (user context, message, default, etc)
+
+interface CommandBuilder {
+  toJSON: () => any; // @discordjs/builders package developers are just fucking morons
+  name: string; //      that could not make their useless builders library compatible with discord.js (event it is the main package)
+  // so i have to break types and use any
+}
+
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
@@ -34,9 +38,7 @@ export default abstract class BaseSlashCommand<
 
   constructor(
     public readonly extension: TExtension,
-    public readonly builder:
-      | SlashCommandBuilder
-      | SlashCommandSubcommandsOnlyBuilder
+    public readonly builder: CommandBuilder
   ) {}
 
   private _getChecks(): CommandCheck[] {
@@ -74,13 +76,13 @@ export default abstract class BaseSlashCommand<
   }
 
   public async getData(
-    interaction: Discord.CommandInteraction
+    interaction: Discord.BaseCommandInteraction
   ): Promise<Record<string, any>> {
     return {};
   }
 
   public getRunOptions(
-    interaction: Discord.CommandInteraction
+    interaction: Discord.BaseCommandInteraction
   ): CommandRunOptions {
     const guild = interaction.guild ?? undefined;
     const member = guild?.members.cache.get(interaction.user.id);
@@ -99,9 +101,9 @@ export default abstract class BaseSlashCommand<
   ): Promise<any> {}
 }
 
-export type CommandRunOptions = {
+export type CommandRunOptions<TInteraction = BaseCommandInteraction> = {
   client: BotClient;
-  interaction: CommandInteraction;
+  interaction: TInteraction;
   member?: Discord.GuildMember;
   guild?: Discord.Guild;
 };
