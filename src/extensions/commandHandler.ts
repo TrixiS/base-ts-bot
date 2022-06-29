@@ -11,11 +11,13 @@ export default class CommandHandlerExtension extends BaseExtension {
       }
 
       const command = this.client.commands.get(interaction.command.name);
-      const runOptions = await command?.getRunOptions(interaction);
 
-      if (!command || !runOptions || !(await command.runChecks(runOptions))) {
+      if (!command) {
         return;
       }
+
+      const runOptions = command.getRunOptions(interaction);
+      const data = await command.getData(interaction);
 
       let subcommandsGroup: string | undefined;
       let subcommandName: string | undefined;
@@ -23,7 +25,7 @@ export default class CommandHandlerExtension extends BaseExtension {
       try {
         subcommandName = interaction.options.getSubcommand();
       } catch {
-        return await command.run(runOptions);
+        return await command.run(runOptions, data);
       }
 
       try {
@@ -38,7 +40,7 @@ export default class CommandHandlerExtension extends BaseExtension {
           subcommand.name === subcommandName
       );
 
-      await subcommand?.callback.call(command, runOptions);
+      await subcommand?.callback.call(command, runOptions, data);
     });
   }
 }
