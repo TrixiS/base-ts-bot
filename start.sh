@@ -1,1 +1,1 @@
-npm i . && npm run start
+npm i pnpm -g && pnpm i . && pnpm setup && pnpm start

@@ -1,2 +1,1 @@
-npm i . && npm run start
-pause
+(npm i pnpm -g && pnpm i . && pnpm setup && pnpm start) || pause

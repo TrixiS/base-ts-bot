@@ -7,7 +7,8 @@
   "author": "TrixiS",
   "license": "MIT",
   "scripts": {
-    "start": "npx prisma generate && npx prisma db push && npx ts-node src/index.ts",
+    "setup": "npx prisma generate && npx prisma db push",
+    "start": "npx ts-node src/index.ts",
     "ext": "npx ts-node src/cli/createExtension.ts",
     "cmd": "npx ts-node src/cli/createCommand.ts"
   },
