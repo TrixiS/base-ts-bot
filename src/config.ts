@@ -1,44 +1,45 @@
-import fs from "fs/promises";
+import fs from "fs";
 import path from "path";
+import constants from "./utils/constants";
 
-// TODO: use config npm package
-
-export type ConfigType = {
+export type Config = {
   readonly botToken: string;
 };
 
-export default class Config {
+class ConfigParser {
   private static _configFileNames: string[] = [
     "config_dev.json",
-    "config.json",
+    "config.json"
   ];
 
-  public static async loadFromFile(filepath: string): Promise<ConfigType> {
-    const content = await fs.readFile(filepath, { encoding: "utf-8" });
+  public static loadFromFile(filepath: string): Config {
+    const content = fs.readFileSync(filepath, { encoding: "utf-8" });
     const configObject = JSON.parse(content);
     return configObject;
   }
 
-  public static async loadFirst(rootPath: string): Promise<ConfigType | null> {
+  public static loadFirst(rootPath: string): Config {
     for (const configFileName of this._configFileNames) {
       const configPath = path.join(rootPath, configFileName);
 
-      if (!(await checkFileExists(configPath))) {
+      if (!checkFileExists(configPath)) {
         continue;
       }
 
       return this.loadFromFile(configPath);
     }
 
-    return null;
+    throw new Error("Config not found");
   }
 }
 
 async function checkFileExists(filepath: string): Promise<boolean> {
   try {
-    await fs.stat(filepath);
+    fs.statSync(filepath);
     return true;
   } catch {
     return false;
   }
 }
+
+export default ConfigParser.loadFirst(constants.rootPath) as Readonly<Config>;

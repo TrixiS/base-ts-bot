@@ -1,20 +1,13 @@
 import BaseExtension from "./commands/extension";
 import BaseSlashCommand from "./commands/command";
 import { Client, ClientOptions } from "discord.js";
-import { ConfigType } from "./config";
 
 export default class BotClient extends Client {
-  private _config: ConfigType;
   private _extensions: BaseExtension[] = [];
   private _commands: Map<string, BaseSlashCommand> = new Map();
 
-  constructor(config: ConfigType, options: ClientOptions) {
+  constructor(options: ClientOptions) {
     super(options);
-    this._config = config;
-  }
-
-  public get config(): ConfigType {
-    return this._config;
   }
 
   public get extensions(): ReadonlyArray<BaseExtension> {
