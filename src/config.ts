@@ -33,7 +33,7 @@ class ConfigParser {
   }
 }
 
-async function checkFileExists(filepath: string): Promise<boolean> {
+function checkFileExists(filepath: string): boolean {
   try {
     fs.statSync(filepath);
     return true;
