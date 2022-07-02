@@ -3,7 +3,7 @@ import path from "path";
 import constants from "./utils/constants";
 
 export type Config = {
-  readonly botToken: string;
+  botToken: string;
 };
 
 class ConfigParser {
