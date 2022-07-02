@@ -5,10 +5,11 @@ import { toCamelCase, extensionsPath, jumpToFile } from "./utils";
 
 const extensionCode = (
   extensionName: string
-) => `import Discord from "discord.js";
+) => `import Discord, { CommandInteraction } from "discord.js";
 import BaseSlashCommand, { CommandRunOptions } from "../lib/command";
 import BaseExtension from "../lib/extension";
 import BotClient from "../client";
+import commandHandler from "../lib/handler";
 import prisma from "../utils/prisma";
 import phrases from "../phrases";
 import { SlashCommandBuilder } from "@discordjs/builders";

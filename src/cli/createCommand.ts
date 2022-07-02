@@ -15,7 +15,8 @@ const commandCode = (
     super(extension, builder);
   }
   
-  async run({ interaction }: CommandRunOptions) {
+  @commandHandler()
+  async run({ interaction }: CommandRunOptions<CommandInteraction>) {
     // TODO: code
   }
 }`;
