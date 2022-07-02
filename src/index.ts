@@ -20,6 +20,7 @@ async function main() {
   await client.login(config.botToken);
 }
 
+// TODO: sigint handler with extensions unregistration
 process.on("uncaughtException", (error) => {
   console.error(`${error.message}\n${error.stack}`);
 });

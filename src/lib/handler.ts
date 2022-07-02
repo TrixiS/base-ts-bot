@@ -24,7 +24,6 @@ export type CommandHandlerOptions = {
 };
 
 // TODO: add check here
-// TODO: add options parser
 // TODO: add parsed options converters as decorators as well e. g.
 //       factory for converter decorator -> @converter("optionName")
 export type CommandHandler = {
