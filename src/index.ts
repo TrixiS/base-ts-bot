@@ -3,6 +3,7 @@ import BotClient from "./client";
 import CommandHandlerExtension from "./extensions/commandHandler";
 import phrases from "./phrases";
 import config from "./config";
+import TestExtension from "./extensions/test";
 
 // TODO: auto import extensions
 
