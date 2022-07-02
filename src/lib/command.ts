@@ -8,11 +8,7 @@ import { CommandHandler } from "./handler";
 
 // TODO: decide how to implement options parsing (push them into CommandRunOptions.options)
 
-// TODO: auto import prisma, phrases
-
 // TODO: specify extension type in cmd script (optional)
-
-// TODO: fix start scripts
 
 // TODO: command type in scripts (user context, message, default, etc)
 
@@ -24,7 +20,7 @@ interface CommandBuilder {
   // so i have to break types and use any
 }
 
-export default abstract class BaseSlashCommand<
+export default class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
   private static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(

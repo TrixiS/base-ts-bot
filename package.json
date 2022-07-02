@@ -15,6 +15,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
     "@prisma/client": "^3.15.2",
+    "base-ts-bot": "link:",
     "discord.js": "^13.5.0",
     "prisma": "^3.8.1",
     "ts-node": "^10.4.0",

@@ -1,10 +1,11 @@
 import BotClient from "../client";
 import BaseSlashCommand from "./command";
+import { CommandSubclass } from "./types";
 
 // TODO: make @event decorator for the extension methods.
 //       like @event({ name: "eventName" })
 
-export default abstract class BaseExtension {
+export default class BaseExtension {
   private _commands: BaseSlashCommand[] = [];
 
   constructor(public readonly client: BotClient) {}
@@ -13,7 +14,8 @@ export default abstract class BaseExtension {
     return this._commands;
   }
 
-  public addCommand(command: BaseSlashCommand) {
+  public addCommand(Command: CommandSubclass) {
+    const command = new Command(this);
     this._commands.push(command);
   }
 
@@ -23,5 +25,5 @@ export default abstract class BaseExtension {
     }
   }
 
-  public async cleanUp() {}
+  public async unregister() {}
 }

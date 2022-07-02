@@ -1,6 +1,7 @@
 import BaseExtension from "./lib/extension";
 import BaseSlashCommand from "./lib/command";
 import { Client, ClientOptions } from "discord.js";
+import { ExtensionSubclass } from "./lib/types";
 
 export default class BotClient extends Client {
   private _extensions: BaseExtension[] = [];
@@ -24,7 +25,8 @@ export default class BotClient extends Client {
     this._commands.set(command.builder.name, command);
   }
 
-  public async registerExtension(extension: BaseExtension) {
+  public async registerExtension(Extension: ExtensionSubclass) {
+    const extension = new Extension(this);
     this._extensions.push(extension);
     await extension.register();
   }

@@ -1,11 +1,11 @@
 import BaseSlashCommand, { CommandRunOptions } from "./command";
+import { CommandSubclass } from "./types";
 
 export default function checkFactory(check: CommandCheck) {
-  return <T extends CommandSubclass>(constructor: T) => {
+  return (constructor: CommandSubclass) => {
     const checksArray = (BaseSlashCommand as any)._checks.get(constructor.name);
     checksArray.push(check);
   };
 }
 
-export type CommandSubclass = new (...args: any[]) => BaseSlashCommand;
 export type CommandCheck = (options: CommandRunOptions) => Promise<boolean>;

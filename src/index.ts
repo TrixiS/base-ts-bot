@@ -1,8 +1,10 @@
+import { Intents } from "discord.js";
 import BotClient from "./client";
 import CommandHandlerExtension from "./extensions/commandHandler";
 import phrases from "./phrases";
 import config from "./config";
-import { Intents } from "discord.js";
+
+// TODO: auto import extensions
 
 async function main() {
   const client = new BotClient({
@@ -10,7 +12,7 @@ async function main() {
   });
 
   client.once("ready", async () => {
-    await client.registerExtension(new CommandHandlerExtension(client));
+    await client.registerExtension(CommandHandlerExtension);
 
     console.log(phrases.default.botStarted(client));
   });
