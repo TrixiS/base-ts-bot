@@ -4,7 +4,7 @@ import DefaultMap from "./defaultMap";
 import { EventHandler } from "./eventHandler";
 import { CommandSubclass } from "./types";
 
-export default class BaseExtension {
+export default abstract class BaseExtension {
   private static _eventHandlers: DefaultMap<string, EventHandler<any>[]> =
     new DefaultMap(() => []);
 

@@ -21,7 +21,7 @@ interface CommandBuilder {
   // so i have to break types and use any
 }
 
-export default class BaseSlashCommand<
+export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
   private static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(
