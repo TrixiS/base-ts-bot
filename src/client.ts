@@ -1,5 +1,5 @@
-import BaseExtension from "./commands/extension";
-import BaseSlashCommand from "./commands/command";
+import BaseExtension from "./lib/extension";
+import BaseSlashCommand from "./lib/command";
 import { Client, ClientOptions } from "discord.js";
 
 export default class BotClient extends Client {

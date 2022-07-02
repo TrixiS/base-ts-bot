@@ -1,16 +1,12 @@
 import Discord from "discord.js";
 import BotClient from "../client";
 import BaseExtension from "./extension";
+import DefaultMap from "./defaultMap";
 import { BaseCommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
-import { SubCommand } from "./subcommand";
-import DefaultMap from "./defaultMap";
+import { CommandHandler } from "./handler";
 
 // TODO: decide how to implement options parsing (push them into CommandRunOptions.options)
-
-// TODO: interface for builder
-
-// TODO: improve cmd/ext scripts, allow sub directories (pass all data in camelCase)
 
 // TODO: auto import prisma, phrases
 
@@ -19,6 +15,8 @@ import DefaultMap from "./defaultMap";
 // TODO: fix start scripts
 
 // TODO: command type in scripts (user context, message, default, etc)
+
+export const runCallbackName = "run";
 
 interface CommandBuilder {
   toJSON: () => any; // @discordjs/builders package developers are just fucking morons
@@ -29,12 +27,12 @@ interface CommandBuilder {
 export default abstract class BaseSlashCommand<
   TExtension extends BaseExtension = BaseExtension
 > {
-  private static _subcommands: DefaultMap<string, SubCommand[]> =
-    new DefaultMap(() => []);
-
   private static _checks: DefaultMap<string, CommandCheck[]> = new DefaultMap(
     () => []
   );
+
+  private static _handlers: DefaultMap<string, CommandHandler[]> =
+    new DefaultMap(() => []);
 
   constructor(
     public readonly extension: TExtension,
@@ -45,24 +43,24 @@ export default abstract class BaseSlashCommand<
     return BaseSlashCommand._checks.get(this.constructor.name);
   }
 
-  private _getSubcommands(): SubCommand[] {
-    return BaseSlashCommand._subcommands.get(this.constructor.name);
+  private _getHandlers(): CommandHandler[] {
+    return BaseSlashCommand._handlers.get(this.constructor.name);
   }
 
   public get checks(): ReadonlyArray<CommandCheck> {
     return this._getChecks();
   }
 
-  public get subcommands(): ReadonlyArray<SubCommand> {
-    return this._getSubcommands();
-  }
-
-  public addSubcommand(subcommand: SubCommand) {
-    this._getSubcommands().push(subcommand);
+  public get handlers(): ReadonlyArray<CommandHandler> {
+    return this._getHandlers();
   }
 
   public addCheck(check: CommandCheck) {
     this._getChecks().push(check);
+  }
+
+  public addHandler(handler: CommandHandler) {
+    this._getHandlers().push(handler);
   }
 
   public async runChecks(options: CommandRunOptions): Promise<boolean> {
@@ -91,14 +89,9 @@ export default abstract class BaseSlashCommand<
       interaction,
       member,
       guild,
-      client: this.extension.client,
+      client: this.extension.client
     };
   }
-
-  public async run(
-    options: CommandRunOptions,
-    data: Record<string, any> = {}
-  ): Promise<any> {}
 }
 
 export type CommandRunOptions<TInteraction = BaseCommandInteraction> = {

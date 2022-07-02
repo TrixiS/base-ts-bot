@@ -1,6 +1,6 @@
 import Discord from "discord.js";
-import checkFactory from "../commands/checkFactory";
-import { CommandRunOptions } from "../commands/command";
+import checkFactory from "../lib/checkFactory";
+import { CommandRunOptions } from "../lib/command";
 
 export const guildOnly = () => {
   return checkFactory(async ({ interaction }: CommandRunOptions) => {
