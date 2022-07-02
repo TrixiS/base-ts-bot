@@ -1,1 +1,1 @@
-npm i pnpm -g && pnpm i . && pnpm setup && pnpm start
+npm i pnpm -g && pnpm i . && pnpm run setup && pnpm run start
