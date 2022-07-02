@@ -5,9 +5,12 @@ import { toCamelCase, extensionsPath, jumpToFile } from "./utils";
 
 const extensionCode = (
   extensionName: string
-) => `import BotClient from "../client";
-import BaseSlashCommand, { CommandRunOptions } from "../commands/command";
-import BaseExtension from "../commands/extension";
+) => `import Discord from "discord.js";
+import BaseSlashCommand, { CommandRunOptions } from "../lib/command";
+import BaseExtension from "../lib/extension";
+import BotClient from "../client";
+import prisma from "../utils/prisma";
+import phrases from "../phrases";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export default class ${extensionName}Extension extends BaseExtension {
@@ -38,7 +41,7 @@ function createExtensionFile(extensionName: string): string {
   }
 
   fs.writeFileSync(extensionFilePath, extensionCode(extensionName), {
-    encoding: "utf-8",
+    encoding: "utf-8"
   });
 
   return extensionFilePath;
