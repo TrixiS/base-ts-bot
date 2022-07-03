@@ -5,15 +5,10 @@ import { toCamelCase, extensionsPath, jumpToFile } from "./utils";
 
 const extensionCode = (
   extensionName: string
-) => `import Discord, { CommandInteraction } from "discord.js";
-import BaseSlashCommand, { CommandRunOptions } from "../lib/command";
-import BaseExtension from "../lib/extension";
-import BotClient from "../client";
-import commandHandler from "../lib/handler";
-import eventHandler from "../lib/eventHandler";
-import prisma from "../utils/prisma";
-import phrases from "../phrases";
-import { SlashCommandBuilder } from "@discordjs/builders";
+) => `import Discord from "discord.js";
+import BaseExtension from "../../lib/extension";
+import BotClient from "../../client";
+import eventHandler from "../../lib/eventHandler";
 
 export default class ${extensionName}Extension extends BaseExtension {
   constructor(client: BotClient) {
@@ -26,7 +21,7 @@ function parseCliOptions(): CLIOptions {
 
   cli.requiredOption(
     "-n, --name <name>",
-    "Name of an extension to create (in PascalCase)"
+    "Name of an extension to create (PascalCase)"
   );
   cli.option("-j --jump", "Jump to the extension file (VSCode only)");
   cli.parse(process.argv);
@@ -34,24 +29,28 @@ function parseCliOptions(): CLIOptions {
   return cli.opts();
 }
 
-function createExtensionFile(extensionName: string): string {
-  const fileName = `${toCamelCase(extensionName)}.ts`;
-  const extensionFilePath = path.join(extensionsPath, fileName);
+function createExtension(extensionName: string) {
+  const extensionDirPath = path.join(
+    extensionsPath,
+    toCamelCase(extensionName)
+  );
+  const exntesionIndexFilePath = path.join(extensionDirPath, "index.ts");
 
-  if (fs.existsSync(extensionFilePath)) {
-    return extensionFilePath;
+  if (fs.existsSync(extensionDirPath)) {
+    return [extensionDirPath, exntesionIndexFilePath];
   }
 
-  fs.writeFileSync(extensionFilePath, extensionCode(extensionName), {
+  fs.mkdirSync(extensionDirPath);
+  fs.writeFileSync(exntesionIndexFilePath, extensionCode(extensionName), {
     encoding: "utf-8"
   });
 
-  return extensionFilePath;
+  return [extensionDirPath, exntesionIndexFilePath];
 }
 
 function main() {
   const options = parseCliOptions();
-  const extensionFilePath = createExtensionFile(options.name);
+  const [_, extensionFilePath] = createExtension(options.name);
 
   console.log(`Extension created -> ${extensionFilePath}`);
 
