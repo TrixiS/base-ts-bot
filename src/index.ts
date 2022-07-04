@@ -50,7 +50,7 @@ async function main() {
 
     for (const Extension of extensionClasses) {
       await client.registerExtension(Extension);
-      console.log(`Loaded extension - ${Extension.name}`);
+      console.log(phrases.default.extensionLoaded(Extension.name));
     }
 
     console.log(phrases.default.botStarted(client));
