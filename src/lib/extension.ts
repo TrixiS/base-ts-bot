@@ -22,7 +22,10 @@ export default abstract class BaseExtension {
     const eventHandlers = this._getEventHandlers();
 
     for (const eventHandler of eventHandlers) {
-      this.client.on(eventHandler.event, eventHandler.listener);
+      const listener = async (...args: any[]) =>
+        eventHandler.listener.apply(this, args);
+
+      this.client.on(eventHandler.event, listener);
     }
   }
 
