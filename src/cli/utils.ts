@@ -16,3 +16,8 @@ export function toCamelCase(str: string): string {
     })
     .replace(/\s+/g, "");
 }
+
+export function getExtensionDirPath(name: string) {
+  const extensionDirPath = path.join(extensionsPath, toCamelCase(name));
+  return extensionDirPath;
+}
