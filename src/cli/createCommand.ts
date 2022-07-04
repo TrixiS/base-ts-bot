@@ -1,16 +1,22 @@
 import fs from "fs";
 import path from "path";
-import { extensionsPath, jumpToFile, toCamelCase } from "./utils";
+import { jumpToFile, toCamelCase, getExtensionDirPath } from "./utils";
 import { Command } from "commander";
 
-const commandCode = (
-  name: string,
-  description: string
-) => `class ${name}Command extends BaseSlashCommand {
-  constructor(extension: BaseExtension) {
+const generateCommandCode = (extensionName: string, name: string) => {
+  const extensionClassName = `${extensionName}Extension`;
+
+  const code = `import Discord, { CommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import ${extensionClassName} from ".";
+import BaseSlashCommand, { CommandRunOptions } from "../../lib/command";
+import commandHandler from "../../lib/handler";
+  
+export default class ${name}Command extends BaseSlashCommand<${extensionClassName}> {
+  constructor(extension: ${extensionClassName}) {
     const builder = new SlashCommandBuilder()
       .setName("${name.toLowerCase()}")
-      .setDescription("${description}");
+      .setDescription(""); // TODO: set command description here
     
     super(extension, builder);
   }
@@ -21,46 +27,56 @@ const commandCode = (
   }
 }`;
 
+  return code;
+};
+
 function parseCliOptions(): CLIOptions {
   const cli = new Command();
 
   cli.requiredOption(
     "-e, --extension <extension>",
-    "Extension to create command in (name of the extension file)"
+    "Extension to create command in (PascalCase)"
   );
 
-  cli.requiredOption("-n, --name <name>", "Command name (in PascalCase)");
+  cli.requiredOption("-n, --name <name>", "Command name (PascalCase)");
   cli.option("-j --jump", "Jump to the extension file (VSCode only)");
   cli.parse(process.argv);
 
   return cli.opts();
 }
 
-function appendCommandCodeToFile(options: CLIOptions, filepath: string) {
-  const code = commandCode(options.name, "description");
-  fs.appendFileSync(filepath, `\n\n${code}`, { encoding: "utf-8" });
+function createCommand(extensionName: string, name: string) {
+  const extensionDirPath = getExtensionDirPath(extensionName);
+  const commandFilePath = path.join(
+    extensionDirPath,
+    `${toCamelCase(name)}.ts`
+  );
+
+  if (fs.existsSync(commandFilePath)) {
+    return commandFilePath;
+  }
+
+  fs.writeFileSync(commandFilePath, generateCommandCode(extensionName, name), {
+    encoding: "utf-8"
+  });
+
+  return commandFilePath;
 }
 
 function main() {
   const options = parseCliOptions();
+  const extensionDirPath = getExtensionDirPath(options.extension);
 
-  const extensionNameCamel = toCamelCase(options.extension);
-  const extensionFileName = extensionNameCamel.endsWith(".ts")
-    ? extensionNameCamel
-    : `${extensionNameCamel}.ts`;
-
-  const extensionPath = path.join(extensionsPath, extensionFileName);
-
-  if (!fs.existsSync(extensionPath)) {
-    throw new Error(`Extension ${extensionFileName} does not exist`);
+  if (!fs.existsSync(extensionDirPath)) {
+    throw new Error(`Extension ${options.extension} does not exist`);
   }
 
-  appendCommandCodeToFile(options, extensionPath);
+  const commandFilePath = createCommand(options.extension, options.name);
 
-  console.log(`Command created -> ${extensionPath}`);
+  console.log(`Command created -> ${commandFilePath}`);
 
   if (options.jump) {
-    jumpToFile(extensionPath);
+    jumpToFile(commandFilePath);
   }
 }
 
