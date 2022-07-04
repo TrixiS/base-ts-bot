@@ -3,9 +3,9 @@ yarn.lock
 bin/*
 config_dev.json
 *sqlite3*
-src/extensions/*test*.ts
 package-lock.json
 pnpm-lock.yaml
+src/extensions/test
 
 # Logs
 logs
