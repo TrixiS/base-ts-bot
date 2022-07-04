@@ -10,8 +10,12 @@ export default abstract class BaseExtension {
 
   private _commands: BaseSlashCommand[] = [];
 
-  constructor(public readonly client: BotClient) {
+  constructor(public readonly client: BotClient, commands?: CommandSubclass[]) {
     this._registerEventHandlers();
+
+    if (commands && commands.length) {
+      commands.forEach((Command) => this.addCommand(Command));
+    }
   }
 
   private _getEventHandlers(): EventHandler<any>[] {
