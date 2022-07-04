@@ -16,7 +16,7 @@ export default class ${name}Command extends BaseSlashCommand<${extensionClassNam
   constructor(extension: ${extensionClassName}) {
     const builder = new SlashCommandBuilder()
       .setName("${name.toLowerCase()}")
-      .setDescription(""); // TODO: set command description here
+      .setDescription(""); // TODO: description
     
     super(extension, builder);
   }
