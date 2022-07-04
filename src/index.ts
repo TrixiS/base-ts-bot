@@ -5,14 +5,26 @@ import config from "./config";
 import fs from "fs";
 import path from "path";
 import { ExtensionSubclass } from "./lib/types";
-import { extensionsPath } from "./cli/utils";
+
+// TODO: DI in runtime
+//       e. g. we have client.extensions (? make it Map<string, class> ?)
+//       after startup we cat get all of those and then assing it in register
+//       after that we could use it in extension classes like loggingExtension: LoggingExntesion
+
+// TODO: LoggerExtension
+
+// TODO: converters for commandHandler (they could be also transformers)
+
+// TODO: pass commands into extension's constructor
 
 function readExtensionDirPaths() {
-  const paths = fs
-    .readdirSync(extensionsPath)
-    .map((p) => path.join(extensionsPath, p));
+  const extensionsPath = path.join(__dirname, "./extensions");
 
-  const extensionPaths = paths.filter((p) => fs.lstatSync(p).isDirectory());
+  const extensionPaths = fs
+    .readdirSync(extensionsPath)
+    .map((p) => path.join(extensionsPath, p))
+    .filter((p) => fs.lstatSync(p).isDirectory());
+
   return extensionPaths;
 }
 
