@@ -105,7 +105,12 @@ export default abstract class BaseSlashCommand<
     }
 
     for (const option of interaction.command?.options) {
-      const argumentOption = interaction.options.get(option.name)!;
+      const argumentOption = interaction.options.get(option.name);
+
+      if (argumentOption === null || argumentOption === undefined) {
+        continue;
+      }
+
       options[option.name] = this.convertCommandOptionValue(
         interaction.options,
         argumentOption
