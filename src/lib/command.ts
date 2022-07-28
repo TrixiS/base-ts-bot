@@ -97,6 +97,21 @@ export default abstract class BaseSlashCommand<
     };
   }
 
+  accumulateCommandOptions(
+    options: Readonly<Discord.CommandInteractionOption[]>,
+    accumulator: Discord.CommandInteractionOption[]
+  ): Discord.CommandInteractionOption[] {
+    for (const option of options) {
+      if (option.options?.length) {
+        return this.accumulateCommandOptions(option.options, accumulator);
+      }
+
+      accumulator.push(option);
+    }
+
+    return accumulator;
+  }
+
   getCommandArgumentOptions(interaction: CommandInteraction) {
     const options: Record<string, any> = {};
 
@@ -104,16 +119,15 @@ export default abstract class BaseSlashCommand<
       return options;
     }
 
-    for (const option of interaction.command?.options) {
-      const argumentOption = interaction.options.get(option.name);
+    const flattenOptions = this.accumulateCommandOptions(
+      interaction.options.data,
+      []
+    );
 
-      if (argumentOption === null || argumentOption === undefined) {
-        continue;
-      }
-
+    for (const option of flattenOptions) {
       options[option.name] = this.convertCommandOptionValue(
         interaction.options,
-        argumentOption
+        option
       );
     }
 
