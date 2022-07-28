@@ -10,7 +10,6 @@ import { BaseCommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
 import { CommandHandler } from "./handler";
 
-// TODO: specify extension type in cmd script (optional)
 // TODO: command type in scripts (user context, message, default, etc)
 
 export const runCallbackName = "run";
@@ -19,6 +18,65 @@ interface CommandBuilder {
   toJSON: () => any; // @discordjs/builders package developers are just fucking morons
   name: string; //      that could not make their useless builders library compatible with discord.js (event it is the main package)
   // so i have to break types and use any
+}
+
+export function accumulateCommandOptions(
+  options: Readonly<Discord.CommandInteractionOption[]>,
+  accumulator: Discord.CommandInteractionOption[]
+): Discord.CommandInteractionOption[] {
+  for (const option of options) {
+    if (option.options?.length) {
+      return accumulateCommandOptions(option.options, accumulator);
+    }
+
+    accumulator.push(option);
+  }
+
+  return accumulator;
+}
+
+export function getCommandArgumentOptions(interaction: CommandInteraction) {
+  const options: Record<string, any> = {};
+
+  if (!interaction.command) {
+    return options;
+  }
+
+  const flattenOptions = accumulateCommandOptions(interaction.options.data, []);
+
+  for (const option of flattenOptions) {
+    options[option.name] = convertCommandOptionValue(
+      interaction.options,
+      option
+    );
+  }
+
+  return options;
+}
+
+export function convertCommandOptionValue(
+  resolver: CommandInteraction["options"],
+  option: CommandInteractionOption
+) {
+  type OptionConverter = (name: string, required?: boolean) => any;
+  const excludedOptionConverter: OptionConverter = (..._) => undefined;
+
+  const converters: Record<ApplicationCommandOptionType, OptionConverter> = {
+    ATTACHMENT: resolver.getAttachment,
+    BOOLEAN: resolver.getBoolean,
+    CHANNEL: resolver.getChannel,
+    INTEGER: resolver.getInteger,
+    MENTIONABLE: resolver.getMentionable,
+    NUMBER: resolver.getNumber,
+    ROLE: resolver.getRole,
+    STRING: resolver.getString,
+    USER: resolver.getUser,
+    SUB_COMMAND: excludedOptionConverter,
+    SUB_COMMAND_GROUP: excludedOptionConverter
+  };
+
+  const converter = converters[option.type];
+  return converter.call(resolver, option.name);
 }
 
 export default abstract class BaseSlashCommand<
@@ -85,7 +143,7 @@ export default abstract class BaseSlashCommand<
     let options: Record<string, any> = {};
 
     if (interaction instanceof CommandInteraction) {
-      options = this.getCommandArgumentOptions(interaction);
+      options = getCommandArgumentOptions(interaction);
     }
 
     return {
@@ -95,68 +153,6 @@ export default abstract class BaseSlashCommand<
       options,
       client: this.extension.client
     };
-  }
-
-  accumulateCommandOptions(
-    options: Readonly<Discord.CommandInteractionOption[]>,
-    accumulator: Discord.CommandInteractionOption[]
-  ): Discord.CommandInteractionOption[] {
-    for (const option of options) {
-      if (option.options?.length) {
-        return this.accumulateCommandOptions(option.options, accumulator);
-      }
-
-      accumulator.push(option);
-    }
-
-    return accumulator;
-  }
-
-  getCommandArgumentOptions(interaction: CommandInteraction) {
-    const options: Record<string, any> = {};
-
-    if (!interaction.command) {
-      return options;
-    }
-
-    const flattenOptions = this.accumulateCommandOptions(
-      interaction.options.data,
-      []
-    );
-
-    for (const option of flattenOptions) {
-      options[option.name] = this.convertCommandOptionValue(
-        interaction.options,
-        option
-      );
-    }
-
-    return options;
-  }
-
-  convertCommandOptionValue(
-    resolver: CommandInteraction["options"],
-    option: CommandInteractionOption
-  ) {
-    type OptionConverter = (name: string, required?: boolean) => any;
-    const excludedOptionConverter: OptionConverter = (..._) => undefined;
-
-    const converters: Record<ApplicationCommandOptionType, OptionConverter> = {
-      ATTACHMENT: resolver.getAttachment,
-      BOOLEAN: resolver.getBoolean,
-      CHANNEL: resolver.getChannel,
-      INTEGER: resolver.getInteger,
-      MENTIONABLE: resolver.getMentionable,
-      NUMBER: resolver.getNumber,
-      ROLE: resolver.getRole,
-      STRING: resolver.getString,
-      USER: resolver.getUser,
-      SUB_COMMAND: excludedOptionConverter,
-      SUB_COMMAND_GROUP: excludedOptionConverter
-    };
-
-    const converter = converters[option.type];
-    return converter.call(resolver, option.name);
   }
 }
 
