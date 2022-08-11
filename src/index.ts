@@ -1,4 +1,4 @@
-import { Intents } from "discord.js";
+import { GatewayIntentBits } from "discord.js";
 import BotClient from "./client";
 import phrases from "./phrases";
 import config from "./config";
@@ -42,7 +42,7 @@ async function importExtensions(): Promise<ExtensionSubclass[]> {
 
 async function main() {
   const client = new BotClient({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
   });
 
   client.once("ready", async () => {

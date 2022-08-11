@@ -1,12 +1,12 @@
 import Discord, {
   ApplicationCommandOptionType,
   CommandInteraction,
+  ChatInputCommandInteraction,
   CommandInteractionOption
 } from "discord.js";
 import BotClient from "../client";
 import BaseExtension from "./extension";
 import DefaultMap from "./defaultMap";
-import { BaseCommandInteraction } from "discord.js";
 import { CommandCheck } from "./checkFactory";
 import { CommandHandler } from "./handler";
 
@@ -35,7 +35,9 @@ export function accumulateCommandOptions(
   return accumulator;
 }
 
-export function getCommandArgumentOptions(interaction: CommandInteraction) {
+export function getCommandArgumentOptions(
+  interaction: ChatInputCommandInteraction
+) {
   const options: Record<string, any> = {};
 
   if (!interaction.command) {
@@ -55,24 +57,24 @@ export function getCommandArgumentOptions(interaction: CommandInteraction) {
 }
 
 export function convertCommandOptionValue(
-  resolver: CommandInteraction["options"],
+  resolver: ChatInputCommandInteraction["options"],
   option: CommandInteractionOption
 ) {
   type OptionConverter = (name: string, required?: boolean) => any;
   const excludedOptionConverter: OptionConverter = (..._) => undefined;
 
   const converters: Record<ApplicationCommandOptionType, OptionConverter> = {
-    ATTACHMENT: resolver.getAttachment,
-    BOOLEAN: resolver.getBoolean,
-    CHANNEL: resolver.getChannel,
-    INTEGER: resolver.getInteger,
-    MENTIONABLE: resolver.getMentionable,
-    NUMBER: resolver.getNumber,
-    ROLE: resolver.getRole,
-    STRING: resolver.getString,
-    USER: resolver.getUser,
-    SUB_COMMAND: excludedOptionConverter,
-    SUB_COMMAND_GROUP: excludedOptionConverter
+    [ApplicationCommandOptionType.Attachment]: resolver.getAttachment,
+    [ApplicationCommandOptionType.Boolean]: resolver.getBoolean,
+    [ApplicationCommandOptionType.Channel]: resolver.getChannel,
+    [ApplicationCommandOptionType.Integer]: resolver.getInteger,
+    [ApplicationCommandOptionType.Mentionable]: resolver.getMentionable,
+    [ApplicationCommandOptionType.Number]: resolver.getNumber,
+    [ApplicationCommandOptionType.Role]: resolver.getRole,
+    [ApplicationCommandOptionType.String]: resolver.getString,
+    [ApplicationCommandOptionType.User]: resolver.getUser,
+    [ApplicationCommandOptionType.Subcommand]: excludedOptionConverter,
+    [ApplicationCommandOptionType.SubcommandGroup]: excludedOptionConverter
   };
 
   const converter = converters[option.type];
@@ -129,22 +131,20 @@ export default abstract class BaseSlashCommand<
   }
 
   public async getData(
-    interaction: Discord.BaseCommandInteraction
+    interaction: Discord.CommandInteraction
   ): Promise<Record<string, any>> {
     return {};
   }
 
   public getRunOptions(
-    interaction: Discord.BaseCommandInteraction
+    interaction: Discord.CommandInteraction
   ): CommandRunOptions {
     const guild = interaction.guild ?? undefined;
     const member = guild?.members.cache.get(interaction.user.id);
-
-    let options: Record<string, any> = {};
-
-    if (interaction instanceof CommandInteraction) {
-      options = getCommandArgumentOptions(interaction);
-    }
+    const options =
+      interaction instanceof ChatInputCommandInteraction
+        ? getCommandArgumentOptions(interaction)
+        : {};
 
     return {
       interaction,
@@ -157,7 +157,7 @@ export default abstract class BaseSlashCommand<
 }
 
 export type CommandRunOptions<
-  TInteraction = BaseCommandInteraction,
+  TInteraction = CommandInteraction,
   TArgumentOptions = Record<string, any>
 > = {
   client: BotClient;

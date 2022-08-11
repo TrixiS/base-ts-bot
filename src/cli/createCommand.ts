@@ -6,8 +6,7 @@ import { Command } from "commander";
 const generateCommandCode = (extensionName: string, name: string) => {
   const extensionClassName = `${extensionName}Extension`;
 
-  const code = `import Discord, { CommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "@discordjs/builders";
+  const code = `import Discord, { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import ${extensionClassName} from ".";
 import BaseSlashCommand, { CommandRunOptions } from "../../lib/command";
 import commandHandler from "../../lib/handler";

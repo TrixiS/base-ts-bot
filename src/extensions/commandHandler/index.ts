@@ -1,7 +1,7 @@
 import BotClient from "../../client";
 import BaseExtension from "../../lib/extension";
 import eventHandler from "../../lib/eventHandler";
-import { CommandInteraction, Interaction } from "discord.js";
+import { ChatInputCommandInteraction, Interaction } from "discord.js";
 import { runCallbackName } from "../../lib/command";
 
 export default class CommandHandlerExtension extends BaseExtension {
@@ -10,10 +10,10 @@ export default class CommandHandlerExtension extends BaseExtension {
   }
 
   @eventHandler("interactionCreate")
-  async commandsInteractionsHandler(interaction: Interaction) {
+  async commandInteractionHandler(interaction: Interaction) {
     if (
-      (!interaction.isCommand() || !interaction.command) &&
-      !interaction.isContextMenu()
+      (!interaction.isChatInputCommand() || !interaction.command) &&
+      !interaction.isContextMenuCommand()
     ) {
       return;
     }
@@ -30,23 +30,23 @@ export default class CommandHandlerExtension extends BaseExtension {
       (handler) => handler.name === runCallbackName
     );
 
-    if (!(interaction instanceof CommandInteraction)) {
+    const runDefaultHandler = async () => {
       if (!runHandler) {
         return;
       }
 
       return await runHandler.callback.call(command, runOptions, data);
+    };
+
+    if (!(interaction instanceof ChatInputCommandInteraction)) {
+      return await runDefaultHandler();
     }
 
-    const [subcommandGroup, subcommandName] =
+    const { group: subcommandGroup, name: subcommandName } =
       this.getSubcommandData(interaction);
 
     if (!subcommandName) {
-      if (!runHandler) {
-        return;
-      }
-
-      return await runHandler.callback.call(command, runOptions, data);
+      return await runDefaultHandler();
     }
 
     const subcommandHandler = command.handlers.find(
@@ -57,24 +57,9 @@ export default class CommandHandlerExtension extends BaseExtension {
     await subcommandHandler?.callback.call(command, runOptions, data);
   }
 
-  getSubcommandData(interaction: CommandInteraction) {
-    let name: string | undefined;
-    let group: string | undefined;
-
-    try {
-      name = interaction.options.getSubcommand();
-    } catch (e) {
-      name = undefined;
-    }
-
-    if (name) {
-      try {
-        group = interaction.options.getSubcommandGroup();
-      } catch (e) {
-        group = undefined;
-      }
-    }
-
-    return [group, name];
+  getSubcommandData(interaction: ChatInputCommandInteraction) {
+    const name = interaction.options.getSubcommand(false);
+    const group = name ? interaction.options.getSubcommandGroup(false) : null;
+    return { group, name };
   }
 }
