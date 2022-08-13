@@ -25,6 +25,11 @@ export default class CommandHandlerExtension extends BaseExtension {
     }
 
     const runOptions = command.getRunOptions(interaction);
+
+    if (!(await command.runChecks(runOptions))) {
+      return;
+    }
+
     const data = await command.getData(interaction);
     const runHandler = command.handlers.find(
       (handler) => handler.name === runCallbackName
