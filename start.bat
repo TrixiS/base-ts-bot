@@ -1,1 +1,1 @@
-(npm i pnpm -g && pnpm i . && pnpm run setup && pnpm run sstart) || pause
+(npm i pnpm -g && pnpm i . --prod && pnpm run setup && pnpm run start) || pause
