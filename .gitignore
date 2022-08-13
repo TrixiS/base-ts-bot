@@ -1,7 +1,7 @@
 # Custom
 yarn.lock
 bin/*
-config_dev.json
+config-dev.json
 *sqlite3*
 package-lock.json
 pnpm-lock.yaml

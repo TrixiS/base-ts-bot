@@ -9,8 +9,7 @@
   "scripts": {
     "setup": "npx prisma generate && npx prisma db push",
     "start": "npx ts-node src/index.ts",
-    "ext": "npx ts-node src/cli/createExtension.ts",
-    "cmd": "npx ts-node src/cli/createCommand.ts"
+    "cli": "npx ts-node cli.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.2.1",
@@ -18,10 +17,13 @@
     "discord.js": "^14.2.0",
     "prisma": "^4.2.1",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "zod": "^3.18.0",
+    "zod-model": "^0.0.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.8",
-    "commander": "^8.3.0"
+    "@types/yargs": "^17.0.11",
+    "yargs": "^17.5.1"
   }
 }

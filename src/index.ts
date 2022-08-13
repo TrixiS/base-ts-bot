@@ -1,9 +1,9 @@
-import { GatewayIntentBits } from "discord.js";
-import BotClient from "./client";
-import phrases from "./phrases";
-import config from "./config";
 import fs from "fs";
 import path from "path";
+import BotClient from "./client";
+import phrases from "./phrases";
+import { GatewayIntentBits } from "discord.js";
+import { config } from "./config";
 import { ExtensionSubclass } from "./lib/types";
 
 // TODO: DI in runtime

@@ -1,45 +1,36 @@
-import fs from "fs";
-import path from "path";
+import * as path from "path";
+import * as fs from "fs";
+import { z } from "zod";
+import { Config } from "zod-model";
 import constants from "./utils/constants";
 
-export type Config = {
-  botToken: string;
+export const configModel = new Config(
+  z.object({
+    botToken: z.string().default("")
+  })
+);
+
+const transformConfigFilename = (filename: string) =>
+  path.join(constants.rootPath, filename);
+
+export type ConfigType = "development" | "production";
+
+export const configFilepaths: Record<ConfigType, string> = {
+  development: transformConfigFilename("config-dev.json"),
+  production: transformConfigFilename("config.json")
 };
 
-class ConfigParser {
-  private static _configFileNames: string[] = [
-    "config_dev.json",
-    "config.json"
-  ];
+export const getExistingConfigFilepaths = () =>
+  Object.values(configFilepaths).filter((filepath) => fs.existsSync(filepath));
 
-  public static loadFromFile(filepath: string): Config {
-    const content = fs.readFileSync(filepath, { encoding: "utf-8" });
-    const configObject = JSON.parse(content);
-    return configObject;
-  }
+const parseExistingConfig = () => {
+  const existingConfigFilepath = getExistingConfigFilepaths()[0];
 
-  public static loadFirst(rootPath: string): Config {
-    for (const configFileName of this._configFileNames) {
-      const configPath = path.join(rootPath, configFileName);
-
-      if (!checkFileExists(configPath)) {
-        continue;
-      }
-
-      return this.loadFromFile(configPath);
-    }
-
+  if (!existingConfigFilepath) {
     throw new Error("Config not found");
   }
-}
 
-function checkFileExists(filepath: string): boolean {
-  try {
-    fs.statSync(filepath);
-    return true;
-  } catch {
-    return false;
-  }
-}
+  return configModel.parseFile(existingConfigFilepath, { encoding: "utf-8" });
+};
 
-export default ConfigParser.loadFirst(constants.rootPath) as Readonly<Config>;
+export const config = parseExistingConfig();
