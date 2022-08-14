@@ -10,10 +10,6 @@ import {
 import constants from "./src/utils/constants";
 import { exec } from "child_process";
 
-// TODO:
-// move cli.ts into deps
-// dynamically import configMode, ...
-
 const extensionsPath = path.join(constants.rootPath, "./src/extensions");
 
 function jumpToFile(filepath: string) {
