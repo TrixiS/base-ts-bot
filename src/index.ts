@@ -53,9 +53,6 @@ async function main() {
 }
 
 // TODO: sigint handler with extensions unregistration
-// TODO: use just .error(error);
-process.on("uncaughtException", (error) => {
-  console.error(`${error.message}\n${error.stack}`);
-});
+process.on("uncaughtException", (error) => console.error(error));
 
 main().then();
