@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.2.1",
-    "@trixis/lib-ts-bot": "^0.1.21",
+    "@trixis/lib-ts-bot": "^0.2.1",
     "discord.js": "^14.2.0",
     "prisma": "^4.2.1",
     "typescript": "^4.5.4",

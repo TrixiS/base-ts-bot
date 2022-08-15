@@ -2,7 +2,7 @@ import { GatewayIntentBits } from "discord.js";
 import {
   BotClient,
   CommandHandlerExtension,
-  importExtensions
+  importAllExtensions
 } from "@trixis/lib-ts-bot";
 import { config } from "./config";
 import phrases from "./phrases";
@@ -17,8 +17,6 @@ import constants from "./utils/constants";
 
 // TODO: converters for commandHandler (they could be also transformers)
 
-// TODO: pass commands into extension's constructor
-
 async function main() {
   const client = new BotClient({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
@@ -27,14 +25,26 @@ async function main() {
   client.once("ready", async () => {
     await client.registerExtension(CommandHandlerExtension);
 
-    const extensionClasses = await importExtensions(
+    const extensionPayloads = await importAllExtensions(
       constants.paths.extensionsPath
     );
 
-    for (const Extension of extensionClasses) {
-      await client.registerExtension(Extension);
-      console.log(phrases.default.extensionLoaded(Extension.name));
-    }
+    await Promise.all(
+      extensionPayloads.map((payload) =>
+        client.registerExtension(payload.extensionClass, payload.commandClasses)
+      )
+    );
+
+    console.table(
+      [...client.extensions.values()]
+        .filter((extension) => extension.commands.length > 0)
+        .map((extension) => ({
+          [phrases.default.extension]: extension.constructor.name,
+          [phrases.default.commands]: extension.commands.map(
+            (command) => `/${command.builder!.name}`
+          )
+        }))
+    );
 
     console.log(phrases.default.botStarted(client));
   });
@@ -43,7 +53,7 @@ async function main() {
 }
 
 // TODO: sigint handler with extensions unregistration
-// TODO: move it to the error handler extension
+// TODO: use just .error(error);
 process.on("uncaughtException", (error) => {
   console.error(`${error.message}\n${error.stack}`);
 });

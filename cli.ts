@@ -21,11 +21,7 @@ import { BaseExtension } from "@trixis/lib-ts-bot";
 import { BotClient } from "@trixis/lib-ts-bot";
 import { eventHandler } from "@trixis/lib-ts-bot";
 
-export default class ${extensionName}Extension extends BaseExtension {
-  constructor(client: BotClient) {
-    super(client);
-  }
-}`;
+export default class ${extensionName}Extension extends BaseExtension {}`;
 
 const generateCommandCode = (extensionName: string, name: string) => {
   const extensionClassName = `${extensionName}Extension`;
@@ -97,7 +93,7 @@ function createCommand(extensionName: string, commandName: string) {
   const extensionDirPath = getExtensionDirPath(extensionName);
   const commandFilePath = path.join(
     extensionDirPath,
-    `${toCamelCase(commandName)}.ts`
+    `${toCamelCase(commandName)}.command.ts`
   );
 
   if (fs.existsSync(commandFilePath)) {
