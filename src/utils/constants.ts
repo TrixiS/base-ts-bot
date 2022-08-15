@@ -7,7 +7,7 @@ export default {
     darkTheme: 0x36393f
   },
   paths: {
-    extensionsPath: path.join(rootPath, "./src/extensions"),
+    extensionsPath: path.join(__dirname, "../extensions"),
     rootPath
   }
 };
