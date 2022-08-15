@@ -1,5 +1,13 @@
-import path from "path";
+import * as path from "path";
+
+const rootPath = path.join(__dirname, "../..");
 
 export default {
-  rootPath: path.join(__dirname, "../.."),
+  colors: {
+    darkTheme: 0x36393f
+  },
+  paths: {
+    extensionsPath: path.join(rootPath, "./src/extensions"),
+    rootPath
+  }
 };

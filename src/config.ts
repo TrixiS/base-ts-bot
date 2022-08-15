@@ -11,7 +11,7 @@ export const configModel = new Config(
 );
 
 const transformConfigFilename = (filename: string) =>
-  path.join(constants.rootPath, filename);
+  path.join(constants.paths.rootPath, filename);
 
 export type ConfigType = "development" | "production";
 

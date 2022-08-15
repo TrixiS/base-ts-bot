@@ -10,8 +10,6 @@ import {
 import constants from "./src/utils/constants";
 import { exec } from "child_process";
 
-const extensionsPath = path.join(constants.rootPath, "./src/extensions");
-
 function jumpToFile(filepath: string) {
   exec(`code ${filepath}`);
 }
@@ -19,9 +17,9 @@ function jumpToFile(filepath: string) {
 const generateExtensionCode = (
   extensionName: string
 ) => `import Discord from "discord.js";
-import BaseExtension from "../../lib/extension";
-import BotClient from "../../client";
-import eventHandler from "../../lib/eventHandler";
+import { BaseExtension } from "@trixis/lib-ts-bot";
+import { BotClient } from "@trixis/lib-ts-bot";
+import { eventHandler } from "@trixis/lib-ts-bot";
 
 export default class ${extensionName}Extension extends BaseExtension {
   constructor(client: BotClient) {
@@ -34,9 +32,12 @@ const generateCommandCode = (extensionName: string, name: string) => {
 
   const code = `import Discord, { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import ${extensionClassName} from ".";
-import BaseSlashCommand, { CommandRunOptions } from "../../lib/command";
-import commandHandler from "../../lib/handler";
-  
+import {
+  BaseSlashCommand,
+  commandHandler,
+  CommandRunOptions
+} from "@trixis/lib-ts-bot";
+
 export default class ${name}Command extends BaseSlashCommand<${extensionClassName}> {
   constructor(extension: ${extensionClassName}) {
     const builder = new SlashCommandBuilder()
@@ -64,12 +65,20 @@ function toCamelCase(str: string): string {
 }
 
 function getExtensionDirPath(name: string) {
-  const extensionDirPath = path.join(extensionsPath, toCamelCase(name));
+  const extensionDirPath = path.join(
+    constants.paths.extensionsPath,
+    toCamelCase(name)
+  );
+
   return extensionDirPath;
 }
 
 function createExtension(name: string) {
-  const extensionDirPath = path.join(extensionsPath, toCamelCase(name));
+  const extensionDirPath = path.join(
+    constants.paths.extensionsPath,
+    toCamelCase(name)
+  );
+
   const extensionIndexFilepath = path.join(extensionDirPath, "index.ts");
 
   if (fs.existsSync(extensionDirPath)) {
@@ -112,14 +121,25 @@ yargs(hideBin(process.argv))
     "Create dev config",
     (yargs) => yargs,
     (argv) => {
+      if (fs.existsSync(configFilepaths.development)) {
+        return console.log(
+          "Development config is already created ->",
+          configFilepaths.development
+        );
+      }
+
       configModel.refreshFile(configFilepaths.development, {
         encoding: "utf-8"
       });
 
-      console.info(
+      console.log(
         "Development config has been created ->",
         configFilepaths.development
       );
+
+      if (!fs.existsSync(constants.paths.extensionsPath)) {
+        fs.mkdirSync(constants.paths.extensionsPath);
+      }
     }
   )
   .command(
@@ -134,7 +154,7 @@ yargs(hideBin(process.argv))
         })
       );
 
-      console.info("Config files have been updated");
+      console.log("Config files have been updated");
     }
   )
   .command(
@@ -146,7 +166,7 @@ yargs(hideBin(process.argv))
         encoding: "utf-8"
       });
 
-      console.info("Production config file has been refreshed");
+      console.log("Production config file has been refreshed");
     }
   )
   .command(
@@ -162,7 +182,7 @@ yargs(hideBin(process.argv))
         .option("jump", { boolean: true, default: false }),
     (argv) => {
       const extensionIndexFilePath = createExtension(argv.name);
-      console.info("Extension has been created ->", extensionIndexFilePath);
+      console.log("Extension has been created ->", extensionIndexFilePath);
 
       if (argv.jump) {
         jumpToFile(extensionIndexFilePath);
@@ -187,11 +207,12 @@ yargs(hideBin(process.argv))
         .option("jump", { boolean: true, default: false }),
     (argv) => {
       const commandFilepath = createCommand(argv.ext, argv.name);
-      console.info("Command has been created ->", commandFilepath);
+      console.log("Command has been created ->", commandFilepath);
 
       if (argv.jump) {
         jumpToFile(commandFilepath);
       }
     }
   )
+  .help()
   .parse();

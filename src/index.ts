@@ -1,10 +1,12 @@
-import fs from "fs";
-import path from "path";
-import BotClient from "./client";
-import phrases from "./phrases";
 import { GatewayIntentBits } from "discord.js";
+import {
+  BotClient,
+  CommandHandlerExtension,
+  importExtensions
+} from "@trixis/lib-ts-bot";
 import { config } from "./config";
-import { ExtensionSubclass } from "./lib/types";
+import phrases from "./phrases";
+import constants from "./utils/constants";
 
 // TODO: DI in runtime
 //       e. g. we have client.extensions (? make it Map<string, class> ?)
@@ -17,36 +19,17 @@ import { ExtensionSubclass } from "./lib/types";
 
 // TODO: pass commands into extension's constructor
 
-function readExtensionDirPaths() {
-  const extensionsPath = path.join(__dirname, "./extensions");
-
-  const extensionPaths = fs
-    .readdirSync(extensionsPath)
-    .map((p) => path.join(extensionsPath, p))
-    .filter((p) => fs.lstatSync(p).isDirectory());
-
-  return extensionPaths;
-}
-
-async function importExtensions(): Promise<ExtensionSubclass[]> {
-  const extensionDirPaths = readExtensionDirPaths();
-  const extensionClasses: ExtensionSubclass[] = [];
-
-  for (const extensionDirPath of extensionDirPaths) {
-    const extensionClass = await import(extensionDirPath);
-    extensionClasses.push(extensionClass.default);
-  }
-
-  return extensionClasses;
-}
-
 async function main() {
   const client = new BotClient({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
   });
 
   client.once("ready", async () => {
-    const extensionClasses = await importExtensions();
+    await client.registerExtension(CommandHandlerExtension);
+
+    const extensionClasses = await importExtensions(
+      constants.paths.extensionsPath
+    );
 
     for (const Extension of extensionClasses) {
       await client.registerExtension(Extension);

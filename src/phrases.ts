@@ -1,4 +1,4 @@
-import BotClient from "./client";
+import { BotClient } from "@trixis/lib-ts-bot";
 
 export default {
   default: {
