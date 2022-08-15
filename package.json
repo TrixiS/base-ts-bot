@@ -7,9 +7,8 @@
   "author": "TrixiS",
   "license": "MIT",
   "scripts": {
-    "build": "rm bin -rf && npx tsc",
     "setup": "npx prisma generate && npx prisma db push",
-    "start": "npm run build && node bin/index.js",
+    "start": "npx tsc && node bin/index.js",
     "cli": "npx ts-node cli.ts"
   },
   "dependencies": {
