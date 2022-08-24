@@ -31,7 +31,7 @@ import ${extensionClassName} from ".";
 import {
   BaseSlashCommand,
   commandHandler,
-  CommandRunOptions
+  CommandContext
 } from "@trixis/lib-ts-bot";
 
 export default class ${name}Command extends BaseSlashCommand<${extensionClassName}> {
@@ -44,7 +44,7 @@ export default class ${name}Command extends BaseSlashCommand<${extensionClassNam
   }
   
   @commandHandler()
-  async run({ interaction }: CommandRunOptions<CommandInteraction>) {
+  async run({ interaction }: CommandContext) {
     // TODO: code
   }
 }`;
