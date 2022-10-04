@@ -6,6 +6,10 @@
   "repository": "https://github.com/TrixiS/base-ts-bot.git",
   "author": "TrixiS",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "setup": "npx prisma generate && npx prisma db push",
     "start": "npx tsc && node bin/index.js",
