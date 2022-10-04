@@ -5,7 +5,7 @@ import { hideBin } from "yargs/helpers";
 import {
   configModel,
   configFilepaths,
-  getExistingConfigFilepaths
+  getExistingConfigFilepaths,
 } from "./src/config";
 import constants from "./src/utils/constants";
 import { exec } from "child_process";
@@ -17,9 +17,7 @@ function jumpToFile(filepath: string) {
 const generateExtensionCode = (
   extensionName: string
 ) => `import Discord from "discord.js";
-import { BaseExtension } from "@trixis/lib-ts-bot";
-import { BotClient } from "@trixis/lib-ts-bot";
-import { eventHandler } from "@trixis/lib-ts-bot";
+import { BaseExtension, BotClient, eventHandler } from "@trixis/lib-ts-bot";
 
 export default class ${extensionName}Extension extends BaseExtension {}`;
 
@@ -83,7 +81,7 @@ function createExtension(name: string) {
 
   fs.mkdirSync(extensionDirPath);
   fs.writeFileSync(extensionIndexFilepath, generateExtensionCode(name), {
-    encoding: "utf-8"
+    encoding: "utf-8",
   });
 
   return extensionIndexFilepath;
@@ -104,7 +102,7 @@ function createCommand(extensionName: string, commandName: string) {
     commandFilePath,
     generateCommandCode(extensionName, commandName),
     {
-      encoding: "utf-8"
+      encoding: "utf-8",
     }
   );
 
@@ -125,7 +123,7 @@ yargs(hideBin(process.argv))
       }
 
       configModel.refreshFile(configFilepaths.development, {
-        encoding: "utf-8"
+        encoding: "utf-8",
       });
 
       console.log(
@@ -146,7 +144,7 @@ yargs(hideBin(process.argv))
       getExistingConfigFilepaths().forEach((filepath) =>
         configModel.updateFile(filepath, {
           read: { encoding: "utf-8" },
-          write: { encoding: "utf-8" }
+          write: { encoding: "utf-8" },
         })
       );
 
@@ -159,7 +157,7 @@ yargs(hideBin(process.argv))
     (yargs) => yargs,
     (argv) => {
       configModel.refreshFile(configFilepaths.production, {
-        encoding: "utf-8"
+        encoding: "utf-8",
       });
 
       console.log("Production config file has been refreshed");
@@ -173,7 +171,7 @@ yargs(hideBin(process.argv))
         .positional("name", {
           demandOption: true,
           type: "string",
-          describe: "Name to create an extension with (PascalCase)"
+          describe: "Name to create an extension with (PascalCase)",
         })
         .option("jump", { boolean: true, default: false }),
     (argv) => {
@@ -193,12 +191,12 @@ yargs(hideBin(process.argv))
         .positional("ext", {
           demandOption: true,
           type: "string",
-          describe: "Name of the extension to create command in"
+          describe: "Name of the extension to create command in",
         })
         .positional("name", {
           demandOption: true,
           type: "string",
-          describe: "Name to create a command with (PascalCase)"
+          describe: "Name to create a command with (PascalCase)",
         })
         .option("jump", { boolean: true, default: false }),
     (argv) => {
