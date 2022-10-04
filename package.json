@@ -17,9 +17,10 @@
   },
   "dependencies": {
     "@prisma/client": "^4.2.1",
-    "@trixis/lib-ts-bot": "^0.2.2",
+    "@trixis/lib-ts-bot": "^0.2.4",
     "discord.js": "^14.2.0",
     "prisma": "^4.2.1",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^4.5.4",
     "zod": "^3.18.0",
     "zod-model": "^0.0.4"

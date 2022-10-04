@@ -1,25 +1,20 @@
+import "reflect-metadata";
 import { GatewayIntentBits } from "discord.js";
 import {
   BotClient,
   CommandHandlerExtension,
-  importAllExtensions
+  importAllExtensions,
 } from "@trixis/lib-ts-bot";
 import { config } from "./config";
 import phrases from "./phrases";
 import constants from "./utils/constants";
 
-// TODO: DI in runtime
-//       e. g. we have client.extensions (? make it Map<string, class> ?)
-//       after startup we cat get all of those and then assing it in register
-//       after that we could use it in extension classes like loggingExtension: LoggingExntesion
-
-// TODO: LoggerExtension
-
+// TODO: LoggerService
 // TODO: converters for commandHandler (they could be also transformers)
 
 async function main() {
   const client = new BotClient({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
   });
 
   client.once("ready", async () => {
@@ -42,7 +37,7 @@ async function main() {
           [phrases.default.extension]: extension.constructor.name,
           [phrases.default.commands]: extension.commands.map(
             (command) => `/${command.builder!.name}`
-          )
+          ),
         }))
     );
 
