@@ -9,45 +9,45 @@ import { config } from "./config";
 import phrases from "./phrases";
 import constants from "./utils/constants";
 
-// TODO: LoggerService
 // TODO: converters for commandHandler (they could be also transformers)
 
-async function main() {
-  const client = new BotClient({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-  });
+const client = new BotClient({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+});
 
-  client.once("ready", async () => {
-    await client.registerExtension(CommandHandlerExtension);
+client.once("ready", async () => {
+  await client.registerExtension(CommandHandlerExtension);
 
-    const extensionPayloads = await importAllExtensions(
-      constants.paths.extensionsPath
-    );
+  const extensionPayloads = await importAllExtensions(
+    constants.paths.extensionsPath
+  );
 
-    await Promise.all(
-      extensionPayloads.map((payload) =>
-        client.registerExtension(payload.extensionClass, payload.commandClasses)
-      )
-    );
+  await Promise.all(
+    extensionPayloads.map((payload) =>
+      client.registerExtension(payload.extensionClass, payload.commandClasses)
+    )
+  );
 
-    console.table(
-      [...client.extensions.values()]
-        .filter((extension) => extension.commands.length > 0)
-        .map((extension) => ({
-          [phrases.default.extension]: extension.constructor.name,
-          [phrases.default.commands]: extension.commands.map(
-            (command) => `/${command.builder!.name}`
-          ),
-        }))
-    );
+  console.table(
+    [...client.extensions.values()].map((extension) => ({
+      [phrases.default.extension]: extension.constructor.name,
+      [phrases.default.commands]: extension.commands.map(
+        (command) => `/${command.builder!.name}`
+      ),
+    }))
+  );
 
-    console.log(phrases.default.botStarted(client));
-  });
+  console.log(phrases.default.botStarted(client));
+});
 
-  await client.login(config.botToken);
-}
+process.on("uncaughtException", (error) => {
+  console.error(error);
+});
 
-// TODO: sigint handler with extensions unregistration
-process.on("uncaughtException", (error) => console.error(error));
+process.on("SIGINT", async () => {
+  const extensions = [...client.extensions.values()];
+  await Promise.all(extensions.map((extension) => extension.unregister()));
+  process.exit();
+});
 
-main().then();
+client.login(config.botToken);
