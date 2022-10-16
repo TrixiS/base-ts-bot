@@ -4,6 +4,6 @@ export default {
   default: {
     botStarted: (client: BotClient) => `Бот ${client.user?.tag} запущен`,
     extension: "Расширение",
-    commands: "Команды"
-  }
-};
+    commands: "Команды",
+  },
+} as const;
