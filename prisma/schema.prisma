@@ -9,3 +9,13 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model CommandCooldownBucket {
+  id        Int      @id @unique @default(autoincrement())
+  commandId String
+  userId    String
+  guildId   String?
+  channelId String?
+  useCount  Int
+  expiresAt DateTime
+}
