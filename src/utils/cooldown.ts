@@ -1,19 +1,35 @@
 import { CommandInteraction } from "discord.js";
 import { CommandCooldownBucket } from "@prisma/client";
-import { BaseCommandCooldownManager } from "@trixis/lib-ts-bot";
+import {
+  BaseCommandCooldownManager,
+  CommandCooldownStrategy,
+} from "@trixis/lib-ts-bot";
 import prisma from "./prisma";
+import { Prisma } from "@prisma/client";
 
 export class DBCommandCooldownManager extends BaseCommandCooldownManager<CommandCooldownBucket> {
   protected async getBucket(interaction: CommandInteraction) {
-    const bucketOptions = {
-      userId: interaction.user.id,
-      guildId: interaction.guildId ?? null,
-      channelId: interaction.channelId ?? null,
-      commandId: interaction.command!.id,
-    };
+    let bucketFindOptions: Prisma.CommandCooldownBucketFindFirstArgs["where"];
+
+    switch (this.options.strategy) {
+      case CommandCooldownStrategy.channel:
+        bucketFindOptions = { channelId: interaction.channelId };
+        break;
+      case CommandCooldownStrategy.guild:
+        bucketFindOptions = { guildId: interaction.guildId };
+        break;
+      case CommandCooldownStrategy.member:
+        bucketFindOptions = {
+          guildId: interaction.guildId,
+          userId: interaction.user.id,
+        };
+        break;
+      case CommandCooldownStrategy.user:
+        bucketFindOptions = { userId: interaction.user.id };
+    }
 
     const bucket = await prisma.commandCooldownBucket.findFirst({
-      where: bucketOptions,
+      where: bucketFindOptions,
     });
 
     if (bucket) {
@@ -22,7 +38,10 @@ export class DBCommandCooldownManager extends BaseCommandCooldownManager<Command
 
     return await prisma.commandCooldownBucket.create({
       data: {
-        ...bucketOptions,
+        guildId: interaction.guildId,
+        userId: interaction.user.id,
+        channelId: interaction.channelId,
+        commandId: interaction.command!.id,
         useCount: 0,
         expiresAt: this.createExpirationDateFromNow(),
       },
