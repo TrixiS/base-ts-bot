@@ -44,10 +44,4 @@ process.on("uncaughtException", (error) => {
   console.error(error);
 });
 
-process.on("SIGINT", async () => {
-  const extensions = [...client.extensions.values()];
-  await Promise.all(extensions.map((extension) => extension.unregister()));
-  process.exit();
-});
-
 client.login(config.botToken);

@@ -16,10 +16,10 @@
     "cli": "npx ts-node cli.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.4.0",
-    "@trixis/lib-ts-bot": "^0.2.11",
+    "@prisma/client": "^4.5.0",
+    "@trixis/lib-ts-bot": "^0.2.20",
     "discord.js": "^14.6.0",
-    "prisma": "^4.4.0",
+    "prisma": "^4.5.0",
     "reflect-metadata": "^0.1.13",
     "typescript": "^4.8.4",
     "zod": "^3.19.1",
