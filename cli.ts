@@ -115,6 +115,15 @@ yargs(hideBin(process.argv))
     "Create dev config",
     (yargs) => yargs,
     (argv) => {
+      if (!fs.existsSync(constants.paths.extensionsPath)) {
+        fs.mkdirSync(constants.paths.extensionsPath);
+
+        console.log(
+          "Extensions dir has been created ->",
+          constants.paths.extensionsPath
+        );
+      }
+
       if (fs.existsSync(configFilepaths.development)) {
         return console.log(
           "Development config is already created ->",
@@ -130,10 +139,6 @@ yargs(hideBin(process.argv))
         "Development config has been created ->",
         configFilepaths.development
       );
-
-      if (!fs.existsSync(constants.paths.extensionsPath)) {
-        fs.mkdirSync(constants.paths.extensionsPath);
-      }
     }
   )
   .command(
