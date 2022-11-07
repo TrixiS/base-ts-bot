@@ -16,27 +16,27 @@ function jumpToFile(filepath: string) {
 
 const generateExtensionCode = (
   extensionName: string
-) => `import Discord from "discord.js";
-import { BaseExtension, BotClient, eventHandler } from "@trixis/lib-ts-bot";
+) => `import { BaseExtension, BotClient, eventHandler } from "@trixis/lib-ts-bot";
 
 export default class ${extensionName}Extension extends BaseExtension {}`;
 
 const generateCommandCode = (extensionName: string, name: string) => {
   const extensionClassName = `${extensionName}Extension`;
-
-  const code = `import Discord, { CommandInteraction, SlashCommandBuilder } from "discord.js";
+  const code = `import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import ${extensionClassName} from ".";
 import {
   BaseSlashCommand,
   commandHandler,
   CommandContext
 } from "@trixis/lib-ts-bot";
+import phrases from "../../phrases";
+import prisma from "../../utils/prisma";
 
 export default class ${name}Command extends BaseSlashCommand<${extensionClassName}> {
   constructor(extension: ${extensionClassName}) {
     const builder = new SlashCommandBuilder()
       .setName("${name.toLowerCase()}")
-      .setDescription(""); // TODO: description
+      .setDescription("");
     
     super(extension, builder);
   }
