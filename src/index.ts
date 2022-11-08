@@ -1,13 +1,10 @@
 import "reflect-metadata";
 import { GatewayIntentBits } from "discord.js";
-import {
-  BotClient,
-  CommandHandlerExtension,
-  importAllExtensions,
-} from "@trixis/lib-ts-bot";
+import { BotClient, CommandHandlerExtension } from "@trixis/lib-ts-bot";
 import { config } from "./config";
 import phrases from "./phrases";
 import constants from "./utils/constants";
+import { importAllExtensions } from "./utils/loader";
 
 // TODO: converters for commandHandler (they could be also transformers)
 

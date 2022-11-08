@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.5.0",
-    "@trixis/lib-ts-bot": "^0.2.20",
+    "@trixis/lib-ts-bot": "^0.2.22",
     "discord.js": "^14.6.0",
     "prisma": "^4.5.0",
     "reflect-metadata": "^0.1.13",
@@ -29,6 +29,6 @@
     "@types/node": "^17.0.45",
     "@types/yargs": "^17.0.13",
     "ts-node": "^10.9.1",
-    "yargs": "^17.6.0"
+    "yargs": "^17.6.2"
   }
 }
