@@ -11,9 +11,9 @@
     "npm": ">=8.0.0"
   },
   "scripts": {
-    "setup": "npx prisma generate && npx prisma db push",
-    "start": "npx tsc && node bin/index.js",
-    "cli": "npx ts-node cli.ts"
+    "setup": "pnpm prisma db push && pnpm tsc",
+    "start": "node bin/index.js",
+    "cli": "pnpm ts-node cli.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.6.0",
