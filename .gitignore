@@ -1,6 +1,6 @@
 # Custom
 yarn.lock
-bin/*
+bin
 config-dev.json
 *sqlite3*
 package-lock.json
