@@ -1,11 +1,10 @@
-import { CommandInteraction } from "discord.js";
-import { CommandCooldownBucket } from "@prisma/client";
+import { CommandCooldownBucket, Prisma } from "@prisma/client";
 import {
   BaseCommandCooldownManager,
   CommandCooldownStrategy,
 } from "@trixis/lib-ts-bot";
+import { CommandInteraction } from "discord.js";
 import prisma from "./prisma";
-import { Prisma } from "@prisma/client";
 
 export class DBCommandCooldownManager extends BaseCommandCooldownManager<CommandCooldownBucket> {
   protected async getBucket(interaction: CommandInteraction) {

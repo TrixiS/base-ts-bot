@@ -1,14 +1,14 @@
-import * as path from "path";
-import * as fs from "fs";
+import { exec } from "child_process";
+import fs from "fs";
+import path from "path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import {
-  configModel,
   configFilepaths,
+  configModel,
   getExistingConfigFilepaths,
 } from "./src/config";
 import constants from "./src/utils/constants";
-import { exec } from "child_process";
 
 function jumpToFile(filepath: string) {
   exec(`code ${filepath}`);

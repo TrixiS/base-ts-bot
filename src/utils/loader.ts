@@ -1,6 +1,6 @@
-import path from "path";
-import fs from "fs";
 import { CommandSubclass, ExtensionSubclass } from "@trixis/lib-ts-bot";
+import fs from "fs";
+import path from "path";
 
 export type ExtensionPayload = {
   extensionClass: ExtensionSubclass;

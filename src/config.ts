@@ -1,12 +1,12 @@
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
 import { z } from "zod";
 import { Config } from "zod-model";
 import constants from "./utils/constants";
 
 export const configModel = new Config(
   z.object({
-    botToken: z.string().default("")
+    botToken: z.string().default(""),
   })
 );
 
@@ -17,7 +17,7 @@ export type ConfigType = "development" | "production";
 
 export const configFilepaths: Record<ConfigType, string> = {
   development: transformConfigFilename("config-dev.json"),
-  production: transformConfigFilename("config.json")
+  production: transformConfigFilename("config.json"),
 };
 
 export const getExistingConfigFilepaths = () =>

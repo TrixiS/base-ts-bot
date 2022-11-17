@@ -1,6 +1,8 @@
+// @ts-ignore
 import "reflect-metadata";
-import { GatewayIntentBits } from "discord.js";
+
 import { BotClient, CommandHandlerExtension } from "@trixis/lib-ts-bot";
+import { GatewayIntentBits } from "discord.js";
 import { config } from "./config";
 import phrases from "./phrases";
 import constants from "./utils/constants";
