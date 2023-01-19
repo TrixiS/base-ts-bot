@@ -10,12 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model CommandCooldownBucket {
-  id        Int      @id @unique @default(autoincrement())
-  commandId String
-  userId    String
-  guildId   String?
-  channelId String?
-  useCount  Int
-  expiresAt DateTime
+model User {
+  id String @id @unique
 }
