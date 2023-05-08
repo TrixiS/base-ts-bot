@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@prisma/client": "^4.6.0",
-    "@trixis/lib-ts-bot": "0.3.2",
+    "@trixis/lib-ts-bot": "0.3.3",
     "bufferutil": "^4.0.7",
-    "discord.js": "14.9.0",
+    "discord.js": "14.10.2",
     "erlpack": "github:discord/erlpack",
     "prisma": "^4.6.0",
     "reflect-metadata": "^0.1.13",
