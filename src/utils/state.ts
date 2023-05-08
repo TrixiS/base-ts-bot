@@ -10,6 +10,7 @@ export type StateCtx<
 };
 
 // TODO: pass adapter: Memory, Prisma, Redis
+// TODO: add strategy: User, Guild, Channel
 export class StateManager {
   private static readonly contexts = new Map<string, StateCtx>();
 
