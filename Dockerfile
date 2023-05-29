@@ -1,4 +1,6 @@
-FROM node:18-alpine
+FROM alpine:3.18
+
+RUN apk add --update --no-cache git npm
 
 COPY . ./app
 
