@@ -10,4 +10,4 @@ RUN npm install --omit=dev
 RUN npx prisma db push
 RUN npx tsc
 
-CMD ["node ./bin/index.js"]
+CMD ["node bin/index.js"]
